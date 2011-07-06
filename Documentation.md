@@ -50,8 +50,8 @@ PHP, dans la mesure où elle est gérée par des fonctions PHP, ce 3e point est 
 Dans le cas de Patchwork (se sont les fichiers de type bootup.* /se sont les fichiers **patchwork.php** )qui s'occupent de mettre en place les actions
 de portage (modification d'un environnement pour qu'il puisse fonctionner sur un autre environnement) liées en partie à la version de PHP. 
 
-	1 LA FONCTION OVERRIDE :
-	------------------------
+1 LA FONCTION OVERRIDE :
+------------------------
 
 Comment cela se passe-t-il ? Entre différentes versions de php, certaines fonctions peuvent ne pas exister ou fonctionner de façons différentes, donc
 Patchwork est codé avec (la dernière version stable) de PHP et à l'aide de la fonction **override()**, implantée dans le fichier **Manager.php**, qui a pour but
@@ -67,8 +67,8 @@ Le premier argument 'ini_set' est une fonction native de PHP, elle est désormai
 est un tableau dont le nombre d'éléments définis le nombre de paramètre de la fonction **patchwork_ini_set()**.
 
 
-	2 LES FICHIERS BOOTUP:
-	----------------------
+2 LES FICHIERS BOOTUP:
+----------------------
 
 Patchwork dispose d'un certain nombres d'outils tel que les fichiers Bootup qui sont chargés de s'assurer du portage des applications.
 
