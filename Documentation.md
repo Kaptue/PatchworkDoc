@@ -1,15 +1,16 @@
 ESSAI DE DOCUMENTATION
 
 
-INITIALISATION : BOOTSTRAPPER.PHP =================================
+INITIALISATION : BOOTSTRAPPER.PHP
+=================================
 	
-	L'initialisation de l'environnement d' d'une application pour patchwork se fait au niveau du Bootstrapper.php de l'application, c'est lui qui va
+	L'initialisation de l'environnement d'une application pour patchwork se fait au niveau du **Bootstrapper.php** de l'application, c'est lui qui va
 procéder aux premiers tests d'environnement et passer le relais à Patchwork en appellant les fichiers nécessaire.  Normalement le fichier **.patchwork.php**
 n'est pas présent à la première initialisation, il est crée. A ce niveau en parallèle du fichier **config.patchwork.php**, qui s'assure de définir
 l'environnement de fonctionnement général de patchwork (préparation à l'encodage, mise en place des variables du serveur nécessaire), c'est le fichier
 **Manager.php** qui prend en charge le chargement des « chemins d'initialisation » et à partir d'un graphe des dépendances déterminé parla spécialisation des «
 chemins d'initialisations » nécessaires au fonctionnement de l'application.  Patchwork linéarise le graphe en partant du « chemin d'initialisation » le plus «
-spécialisé » au moins « spécialisé », le chargement de l'environnement des requêtes s'effectue en partant du chemins d'initialisation l moins « spécialisé » àau
+spécialisé » au moins « spécialisé », le chargement de l'environnement des requêtes s'effectue en partant du chemin d'initialisation le moins « spécialisé » au
 chemin de spécialisation le plus « spécialisé » (la vérification de cette environnement passe  par une scuccession de tests notamment de la version de PHP, de
 la plateforme de travail et de l'encodage), une fois cet environnement d'éxécution garanti, il ne reste plus qu'à éxécuter chaque « requête d'éxecution » selon
 l'ordre défini par le graphe des dépendances, donc du plus « spécialisé » au moins « spécialisé ». A ce stade l'application est dite configurée, il n'y a plus
@@ -22,7 +23,8 @@ Aussi, si l'utilisateur procéde à des modifications de sa version de PHP ou en
 cache et de relancer l'application qui se verra crée par Patchwork un nouvel environnement de travail adaptée à la nouvelle configuration logcielle ou
 matérielle de l'utilisateur.
 
-#PORTABILITE :
+PORTABILITE :
+=============
 
 	La portabilité d'une application réside dans le fait de pouvoir être fonctionnelle sur des environnement toujours plus divers et variés, donc garantir
 la portabilité est une nécessité si l'on souhaite maintenir une certaine robustesse au temps pour une application donnée.  	
@@ -38,8 +40,7 @@ soucier des problèmes de compatibilités régulièrement rencontrés en PHP ent
 chacune possède son environnement d'initialisation personnalisé défini dans le fichier **.patchwork.php** et annule une certaine dépendance de l'environnement
 de base dans lesquelles les applications ont été crées car chaque fichier possède un bout de patchwork. 
 
-/*	
-	Les rôles des fichiers (boostrapper.php), Manager.php, bootup.patchwork.php et config.patchwork.php seront détaillés puisque que ce sont ces fichiers là
+/* Les rôles des fichiers (boostrapper.php), Manager.php, bootup.patchwork.php et config.patchwork.php seront détaillés puisque que ce sont ces fichiers là
 qui garantissent la portabilité de patchwork. */
 
 	La portabilité d'une application php revêt 3 niveaux, le premier la version de php, le second le système d'exploitation et le troisième l'encodage (le
@@ -95,7 +96,8 @@ compilation sinon Patchwork ne fonctionnera pas.
 
 Patchwork gère donc les erreurs, bugs et incompatibilités suivantes :
 
-PHP < 5.2.0.  ------------
+###PHP < 5.2.0.  
+
 * La fonction substr_compare(stra, strb, intc, intd), qui permet de comparer stra à partir de la position intc avec srtb pendant intd caractères, ne devrait pas
 * donner un avertissement en sortie et retournait FALSE si le paramère intd est égale à la longueur du paramètre stra. Par ailleurs  l'erreur invalide suivante
 * est renvoyée : «La position de départ (intc) ne peut pas dépasser la longueur du paramètre stra » même lorsque zéro est spécifiée comme position de départ.
@@ -121,12 +123,12 @@ une des chaînes de caractères commencerait par 'c...' et les autres 'C...'
 * require() et include () en erreur si elles sont utilisées en utilisant le résultat de getcwd(). 
 
 
-PHP = 5.2.9.  ------------
+###PHP = 5.2.9.  ------------
 * La fonction array_unique(), utile pour procéder à la suppression de doublons dans un tableau, gère mal la comparaison de certaines chaines de caractères.
 * Ainsi si on teste array_unique() avec le tableau suivant : $array=array('400.000', '400') ; arraytest1=array_unique($array) ; var_dump($arraytest1) renverra
 * uniquement 400.000, 400 a été traité comme un doublon de 400.000 par la array_unique(). 
 
-PHP < 5.3.0.  ------------
+###PHP < 5.3.0.  ------------
 * Avec l'arrivée de php 5.3.0, l'utilisateur a pu constater l'impltémentation des espaces de noms représentés par « \ », utiles pour la définition d'aliases
 * pour les noms de classes  et offrant la possibilité « d'encapsuler » l'ensemble des classes d'une bibliothèque dans un espace de noms. Il peut donc exister
 * des soucis de compatabilité avec différentes versions de PHP ne gérant pas les espaces de noms.
@@ -139,11 +141,11 @@ PHP < 5.3.0.  ------------
 
 	L'encodage Utf-8: 
 	
-PHP < 5.2.0.  ------------
+###PHP < 5.2.0.  ------------
 * Les méthodes de caractères multi-octets développées pour résoudre les problèmes liés aux langues représentées grâce à un jeu de plus de 128 caractères sont
 * absentes, ce qui est un grand handicap lorsqu'on souhaite manipuler des chaînes encodées en multi-octets en PHP. 
 
-PHP < 5.2.3.  ------------
+###PHP < 5.2.3.  ------------
 * Les fonctions htmlspecialchars() et htmlentities(),  utiles pour convertir des entités HTML en leur équivalent dans la chaîne string, ne possédent pas
 * l'argument $double_encode qui permet de ne pas avoir d'encodage automatique des entités html existantes. 
 
