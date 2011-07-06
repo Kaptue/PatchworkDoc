@@ -50,7 +50,8 @@ PHP, dans la mesure où elle est gérée par des fonctions PHP, ce 3e point est 
 Dans le cas de Patchwork (se sont les fichiers de type bootup.* /se sont les fichiers **patchwork.php** )qui s'occupent de mettre en place les actions
 de portage (modification d'un environnement pour qu'il puisse fonctionner sur un autre environnement) liées en partie à la version de PHP. 
 
-	#1 LA FONCTION OVERRIDE :
+	1 LA FONCTION OVERRIDE :
+	------------------------
 
 Comment cela se passe-t-il ? Entre différentes versions de php, certaines fonctions peuvent ne pas exister ou fonctionner de façons différentes, donc
 Patchwork est codé avec (la dernière version stable) de PHP et à l'aide de la fonction **override()**, implantée dans le fichier **Manager.php**, qui a pour but
@@ -66,7 +67,8 @@ Le premier argument 'ini_set' est une fonction native de PHP, elle est désormai
 est un tableau dont le nombre d'éléments définis le nombre de paramètre de la fonction **patchwork_ini_set()**.
 
 
-	#2 LES FICHIERS BOOTUP:
+	2 LES FICHIERS BOOTUP:
+	----------------------
 
 Patchwork dispose d'un certain nombres d'outils tel que les fichiers Bootup qui sont chargés de s'assurer du portage des applications.
 
@@ -80,7 +82,7 @@ gèrent la portabilité au niveau des systèmes. 	/* soit à des incompatibilit�
 
 
 #PARSER 
--------
+=======
 
 Parmi les outils originaux et puissants de Patchwork, on peut compter le Parser. 
 
@@ -124,12 +126,12 @@ une des chaînes de caractères commencerait par 'c...' et les autres 'C...'
  require() et include () en erreur si elles sont utilisées en utilisant le résultat de getcwd(). 
 
 
-###PHP = 5.2.9.  ------------
+###PHP = 5.2.9. 
  *La fonction array_unique(), utile pour procéder à la suppression de doublons dans un tableau, gère mal la comparaison de certaines chaines de caractères.
  Ainsi si on teste array_unique() avec le tableau suivant : $array=array('400.000', '400') ; arraytest1=array_unique($array) ; var_dump($arraytest1) renverra
  uniquement 400.000, 400 a été traité comme un doublon de 400.000 par la array_unique(). 
 
-###PHP < 5.3.0.  ------------
+###PHP < 5.3.0. 
  *Avec l'arrivée de php 5.3.0, l'utilisateur a pu constater l'impltémentation des espaces de noms représentés par « \ », utiles pour la définition d'aliases
  pour les noms de classes  et offrant la possibilité « d'encapsuler » l'ensemble des classes d'une bibliothèque dans un espace de noms. Il peut donc exister
  des soucis de compatabilité avec différentes versions de PHP ne gérant pas les espaces de noms.
@@ -142,11 +144,11 @@ une des chaînes de caractères commencerait par 'c...' et les autres 'C...'
 
 	##L'encodage Utf-8: 
 	
-###PHP < 5.2.0.  ------------
+###PHP < 5.2.0. 
 * Les méthodes de caractères multi-octets développées pour résoudre les problèmes liés aux langues représentées grâce à un jeu de plus de 128 caractères sont
  absentes, ce qui est un grand handicap lorsqu'on souhaite manipuler des chaînes encodées en multi-octets en PHP. 
 
-###PHP < 5.2.3.  ------------
+###PHP < 5.2.3. 
  Les fonctions htmlspecialchars() et htmlentities(),  utiles pour convertir des entités HTML en leur équivalent dans la chaîne string, ne possédent pas
  l'argument $double_encode qui permet de ne pas avoir d'encodage automatique des entités html existantes. 
 
