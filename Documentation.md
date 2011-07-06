@@ -101,45 +101,45 @@ Patchwork gère donc les erreurs, bugs et incompatibilités suivantes :
 
 ###PHP < 5.2.0.  
 
-* La fonction substr_compare(stra, strb, intc, intd), qui permet de comparer stra à partir de la position intc avec srtb pendant intd caractères, ne devrait pas
+ * La fonction substr_compare(stra, strb, intc, intd), qui permet de comparer stra à partir de la position intc avec srtb pendant intd caractères, ne devrait pas
  donner un avertissement en sortie et retournait FALSE si le paramère intd est égale à la longueur du paramètre stra. Par ailleurs  l'erreur invalide suivante
  est renvoyée : «La position de départ (intc) ne peut pas dépasser la longueur du paramètre stra » même lorsque zéro est spécifiée comme position de départ.
  
 
- *Sur les plate-formes MS-Windows, la récursivité de la fonction mkdir(PATH, true) est inopérante lorsque le chemin passé en argument possède un dossier «
+ * Sur les plate-formes MS-Windows, la récursivité de la fonction mkdir(PATH, true) est inopérante lorsque le chemin passé en argument possède un dossier «
  super-utilisateur » non-existant. Ex : si PATH='\toto\titi\tata' et que le dossier toto n'existe pas, mkdir renvoie une erreur en sortie « No such file or
  directory in xxx.php on line xxx » alors qu'il devrait normalement crée le dossier toto puis titi etc....  Les fonctions setcookie() et setrawcookie(), qui
  servent à l'envoi des cookies, ne possèdent pas l'option httponly. Or cette option lorsqu'elle est activée permet de rendre le cookie accessible uniquement
  par le protocole HTTP. Cela signifie que le cookie ne sera pas accessible via des langages de scripts, comme Javascript. Cette configuration permet de limiter
  les attaques via XSS.
 
- *Sur les plate-formes MS-WINDOWS, la fonction file_exits(), permettant la vérification de l'existence d'un fichier, interprète mal les fichiers dont le nom est
+ * Sur les plate-formes MS-WINDOWS, la fonction file_exits(), permettant la vérification de l'existence d'un fichier, interprète mal les fichiers dont le nom est
  d'une certaine taille. (Rajouter un EX?)
 
- *Sur MS-WINDOWS, la fonction realpath() n'interprète pas la lettre correspondant au nom du driver dans un path, Exemple : realpath('C:\WINDOWS') retourne
+ * Sur MS-WINDOWS, la fonction realpath() n'interprète pas la lettre correspondant au nom du driver dans un path, Exemple : realpath('C:\WINDOWS') retourne
  'C:\WINDOWS' mais  
 realpath('c:\WINDOWS') retourne 'c:\WINDOWS'  au lieu de renvoyer 'C:\\WINDOWS', cette erreur rend par exemple impossible la comparaison de PATH dans le cas où
 une des chaînes de caractères commencerait par 'c...' et les autres 'C...'
 
- *Sur les versions de Solaris postérieurs à la version 5.8, la fonction getcwd() ne renvoie pas le bon répertoire de travail fichiers/dossiers dont
+ * Sur les versions de Solaris postérieurs à la version 5.8, la fonction getcwd() ne renvoie pas le bon répertoire de travail fichiers/dossiers dont
  l'utilisateur ne possède pas le droit de lecture, même si il possède le droit d'éxecution du dossier parent. Cela a pour conséquence d'induire les fonctions
  require() et include () en erreur si elles sont utilisées en utilisant le résultat de getcwd(). 
 
 
 ###PHP = 5.2.9. 
- *La fonction array_unique(), utile pour procéder à la suppression de doublons dans un tableau, gère mal la comparaison de certaines chaines de caractères.
+ * La fonction array_unique(), utile pour procéder à la suppression de doublons dans un tableau, gère mal la comparaison de certaines chaines de caractères.
  Ainsi si on teste array_unique() avec le tableau suivant : $array=array('400.000', '400') ; arraytest1=array_unique($array) ; var_dump($arraytest1) renverra
  uniquement 400.000, 400 a été traité comme un doublon de 400.000 par la array_unique(). 
 
 ###PHP < 5.3.0. 
- *Avec l'arrivée de php 5.3.0, l'utilisateur a pu constater l'impltémentation des espaces de noms représentés par « \ », utiles pour la définition d'aliases
+ * Avec l'arrivée de php 5.3.0, l'utilisateur a pu constater l'impltémentation des espaces de noms représentés par « \ », utiles pour la définition d'aliases
  pour les noms de classes  et offrant la possibilité « d'encapsuler » l'ensemble des classes d'une bibliothèque dans un espace de noms. Il peut donc exister
  des soucis de compatabilité avec différentes versions de PHP ne gérant pas les espaces de noms.
 
- *La fonction spl_autoload_register() ne possède pas l'argument $prepend qui permet d'ajouter une fonction au début de la pile de l'autoloader au lieu de
+ * La fonction spl_autoload_register() ne possède pas l'argument $prepend qui permet d'ajouter une fonction au début de la pile de l'autoloader au lieu de
  l'ajouter à la fin de la pile. 
 
- *De plus spl_autoload_register() ne renvoie pas dans certains cas les instances d'objets mais plutôt les noms de classe, ce qui provoque de nombreuses erreurs,
+ * De plus spl_autoload_register() ne renvoie pas dans certains cas les instances d'objets mais plutôt les noms de classe, ce qui provoque de nombreuses erreurs,
  notamment avec l'utilisation des exceptions. (A compléter).
 
 	##L'encodage Utf-8: 
@@ -149,11 +149,11 @@ une des chaînes de caractères commencerait par 'c...' et les autres 'C...'
  absentes, ce qui est un grand handicap lorsqu'on souhaite manipuler des chaînes encodées en multi-octets en PHP. 
 
 ###PHP < 5.2.3. 
- Les fonctions htmlspecialchars() et htmlentities(),  utiles pour convertir des entités HTML en leur équivalent dans la chaîne string, ne possédent pas
+ * Les fonctions htmlspecialchars() et htmlentities(),  utiles pour convertir des entités HTML en leur équivalent dans la chaîne string, ne possédent pas
  l'argument $double_encode qui permet de ne pas avoir d'encodage automatique des entités html existantes. 
 
-Hors de toute versions :
- Sur certains systèmes la fonction iconv(), qui permet la conversion d'une chaîne de caractère définie en un jeu de caractères dans un autre, n'existe pas elle
+ Hors de toute versions :
+ * Sur certains systèmes la fonction iconv(), qui permet la conversion d'une chaîne de caractère définie en un jeu de caractères dans un autre, n'existe pas elle
  est remplacé par la fonction libiconv(). Afin d'uniformiser le tout, patchwork transforme crée la fonction iconv() qui remplace la fonction libiconv().              
 
 
