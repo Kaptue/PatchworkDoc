@@ -4,7 +4,7 @@ ESSAI DE DOCUMENTATION
 INITIALISATION : BOOTSTRAPPER.PHP
 =================================
 	
-	L'initialisation de l'environnement d'une application pour patchwork se fait au niveau du **Bootstrapper.php** de l'application, c'est lui qui va
+L'initialisation de l'environnement d'une application pour patchwork se fait au niveau du **Bootstrapper.php** de l'application, c'est lui qui va
 procéder aux premiers tests d'environnement et passer le relais à Patchwork en appellant les fichiers nécessaire.  Normalement le fichier **.patchwork.php**
 n'est pas présent à la première initialisation, il est crée. A ce niveau en parallèle du fichier **config.patchwork.php**, qui s'assure de définir
 l'environnement de fonctionnement général de patchwork (préparation à l'encodage, mise en place des variables du serveur nécessaire), c'est le fichier
@@ -26,33 +26,33 @@ matérielle de l'utilisateur.
 PORTABILITE :
 =============
 
-	La portabilité d'une application réside dans le fait de pouvoir être fonctionnelle sur des environnement toujours plus divers et variés, donc garantir
+La portabilité d'une application réside dans le fait de pouvoir être fonctionnelle sur des environnement toujours plus divers et variés, donc garantir
 la portabilité est une nécessité si l'on souhaite maintenir une certaine robustesse au temps pour une application donnée.  	
 
-	Patchwork est codé en PHP objet et recommande fortement son utilisation pour le développement d'applications. Le PHP étant un langage/plate-forme sans
+Patchwork est codé en PHP objet et recommande fortement son utilisation pour le développement d'applications. Le PHP étant un langage/plate-forme sans
 cesse amélioré et corrigé, il est important de garantir une assez grande compatibilité de son produit. Dans cette logique, Patchwork a été construit en gardant
 la portabilité à l'esprit, ainsi il dispose d'outils rendant son installation et utilisation simplifiées du point de vue de l'utilisateur, qui n'a pas à se
 soucier des problèmes de compatibilités régulièrement rencontrés en PHP entre différentes versions. 
 
-	Et patchwork attaque le soucis de la portabilité en initialisant un environnement spécifique à l'application. 
+Et patchwork attaque le soucis de la portabilité en initialisant un environnement spécifique à l'application. 
 
-	Le mécanisme d'initialisation défini dans la partie **Bootstrapper.php** a pour but de maintenir une grande portabilité des applications, puisque
+Le mécanisme d'initialisation défini dans la partie **Bootstrapper.php** a pour but de maintenir une grande portabilité des applications, puisque
 chacune possède son environnement d'initialisation personnalisé défini dans le fichier **.patchwork.php** et annule une certaine dépendance de l'environnement
 de base dans lesquelles les applications ont été crées car chaque fichier possède un bout de patchwork. 
 
 /* Les rôles des fichiers (boostrapper.php), Manager.php, bootup.patchwork.php et config.patchwork.php seront détaillés puisque que ce sont ces fichiers là
 qui garantissent la portabilité de patchwork. */
 
-	La portabilité d'une application php revêt 3 niveaux, le premier la version de php, le second le système d'exploitation et le troisième l'encodage (le
+La portabilité d'une application php revêt 3 niveaux, le premier la version de php, le second le système d'exploitation et le troisième l'encodage (le
 serveur web pose rarement problème notamment grâce à la généralisation de l'utilisation du serveur apache). L'encodage étant souvent fonction de la version de
 PHP, dans la mesure où elle est gérée par des fonctions PHP, ce 3e point est souvent résolu en même temps que le premier.
 
-	Dans le cas de Patchwork (se sont les fichiers de type bootup.* /se sont les fichiers **patchwork.php** )qui s'occupent de mettre en place les actions
+Dans le cas de Patchwork (se sont les fichiers de type bootup.* /se sont les fichiers **patchwork.php** )qui s'occupent de mettre en place les actions
 de portage (modification d'un environnement pour qu'il puisse fonctionner sur un autre environnement) liées en partie à la version de PHP. 
 
 	##1 LA FONCTION OVERRIDE :
 
-	Comment cela se passe-t-il ? Entre différentes versions de php, certaines fonctions peuvent ne pas exister ou fonctionner de façons différentes, donc
+Comment cela se passe-t-il ? Entre différentes versions de php, certaines fonctions peuvent ne pas exister ou fonctionner de façons différentes, donc
 Patchwork est codé avec (la dernière version stable) de PHP et à l'aide de la fonction **override()**, implantée dans le fichier **Manager.php**, qui a pour but
 : Soit lorsqu'on a une version de php antérieur, de charger les fonctions ou arguments de fonctions non existants dans la version de php de l'utilisateur en
 introduisant leur fonctionnement dans d'autres variables (flou).  Soit lorsqu'un bug est connu pour une fonction précise, de corriger ce bug souvent en la
@@ -60,17 +60,17 @@ remplaçant par une fonction corrigée.
 
 Un exemple de la fonction d'utilisation de la fonction **override()** : 
 
- <code>override('ini_set', 	'patchwork_ini_set', 	array('$v ', '$v')); </code>
+ **<code>override('ini_set', 	'patchwork_ini_set', 	array('$v ', '$v')); </code>**
 
-	Le premier argument 'ini_set' est une fonction native de PHP, elle est désormais associé au deuxième argument 'patchwork_ini_set', le troisième argument
+Le premier argument 'ini_set' est une fonction native de PHP, elle est désormais associé au deuxième argument 'patchwork_ini_set', le troisième argument
 est un tableau dont le nombre d'éléments définis le nombre de paramètre de la fonction **patchwork_ini_set()**.
 
 
 	##2 LES FICHIERS BOOTUP:
 
-	Patchwork dispose d'un certain nombres d'outils tel que les fichiers Bootup qui sont chargés de s'assurer du portage des applications.
+Patchwork dispose d'un certain nombres d'outils tel que les fichiers Bootup qui sont chargés de s'assurer du portage des applications.
 
-	En particulier ce sont les fichiers **bootup.patchwork.php** qui jouent le rôle d'arbitre pour la fonction **override()** et qui disent à quel moment
+En particulier ce sont les fichiers **bootup.patchwork.php** qui jouent le rôle d'arbitre pour la fonction **override()** et qui disent à quel moment
 elle doit s'éxécuter et de quelle manière.  Le mécanisme est assez simple, une succession de test sur la version PHP.  Ils prennent en charge l'absence de
 fonctions liés aux versions de PHP, l'absence de fonctions/extensions liés à l'encodage Utf-8 puisque Patchwork est codé en Utf-8. Ainsi ils gèrent le portage
 des fonctions liés aux différences entre les versions de PHP ou alors entre 2 systèmes d'exploitation(Ex : Linux/Windows).
@@ -79,11 +79,12 @@ des fonctions liés aux différences entre les versions de PHP ou alors entre 2 
 gèrent la portabilité au niveau des systèmes. 	/* soit à des incompatibilités de chemin de fichier. Utilisation de « \ » pour Windows et « / », plus  */ 
 
 
-#PARSER -------
+#PARSER 
+-------
 
-	Parmi les outils originaux et puissants de Patchwork, on peut compter le Parser. 
+Parmi les outils originaux et puissants de Patchwork, on peut compter le Parser. 
 
-	Le Parser est un outil qui va permettre de parser un fichier, c'est-à-dire de l'analyser token par token tout en déterminant le type de chaque token.
+Le Parser est un outil qui va permettre de parser un fichier, c'est-à-dire de l'analyser token par token tout en déterminant le type de chaque token.
 Lorsqu'on souhaite apporter des modifications à un fichier à certains moments non-prédéterminées ou alors des modifications spécifiques à une circonst ance, le
 parser est un moyen idéal d'y parvenir sans modifier pour autant la structure du fichier.  Ainsi il existe selon les modifications que l'on souhaite apporter un
 ensemble d'options à appliqués sur le fichier cible. 	La procédure de parserisation est la suivante : on sélectionne un fichier dont on prévlève le contenu,
@@ -139,7 +140,7 @@ une des chaînes de caractères commencerait par 'c...' et les autres 'C...'
 * De plus spl_autoload_register() ne renvoie pas dans certains cas les instances d'objets mais plutôt les noms de classe, ce qui provoque de nombreuses erreurs,
 * notamment avec l'utilisation des exceptions. (A compléter).
 
-	L'encodage Utf-8: 
+	##L'encodage Utf-8: 
 	
 ###PHP < 5.2.0.  ------------
 * Les méthodes de caractères multi-octets développées pour résoudre les problèmes liés aux langues représentées grâce à un jeu de plus de 128 caractères sont
@@ -149,7 +150,7 @@ une des chaînes de caractères commencerait par 'c...' et les autres 'C...'
 * Les fonctions htmlspecialchars() et htmlentities(),  utiles pour convertir des entités HTML en leur équivalent dans la chaîne string, ne possédent pas
 * l'argument $double_encode qui permet de ne pas avoir d'encodage automatique des entités html existantes. 
 
-	Hors de toute versions :
+Hors de toute versions :
 * Sur certains systèmes la fonction iconv(), qui permet la conversion d'une chaîne de caractère définie en un jeu de caractères dans un autre, n'existe pas elle
 * est remplacé par la fonction libiconv(). Afin d'uniformiser le tout, patchwork transforme crée la fonction iconv() qui remplace la fonction libiconv().              
 
@@ -172,14 +173,14 @@ puissiez vous en servir par la suite.
 
 /////PRE-REQUIS//// 
 	
-	Afin de garantir un fonctionnement minimal de Patchwork, il est nécessaire que ces trois conditions soient remplies : 
+Afin de garantir un fonctionnement minimal de Patchwork, il est nécessaire que ces trois conditions soient remplies : 
 
 PHP (version 5.1.4 ou supérieur) Un système d'exploitation (Linux, MacOS, Windows ,...) Un serveur HTTP (Apache 2 conseillé)
 
-	Apache est conseillé car il justifie d'une très grande flexibilité puisqu'il fonctionne sur les systèmes Linux, MacOS et Windows. 
+Apache est conseillé car il justifie d'une très grande flexibilité puisqu'il fonctionne sur les systèmes Linux, MacOS et Windows. 
 
 /////INSTALLATION/////
-	Pas de modifications à apporter pour l'instant, si ce n'est sur les commenades d'accés au dépôt et la procédure d'install.
+Pas de modifications à apporter pour l'instant, si ce n'est sur les commenades d'accés au dépôt et la procédure d'install.
 
 
 
