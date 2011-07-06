@@ -1,0 +1,189 @@
+ESSAI DE DOCUMENTATION
+
+
+INITIALISATION : BOOTSTRAPPER.PHP =================================
+	
+	L'initialisation de l'environnement d' d'une application pour patchwork se fait au niveau du Bootstrapper.php de l'application, c'est lui qui va
+procéder aux premiers tests d'environnement et passer le relais à Patchwork en appellant les fichiers nécessaire.  Normalement le fichier **.patchwork.php**
+n'est pas présent à la première initialisation, il est crée. A ce niveau en parallèle du fichier **config.patchwork.php**, qui s'assure de définir
+l'environnement de fonctionnement général de patchwork (préparation à l'encodage, mise en place des variables du serveur nécessaire), c'est le fichier
+**Manager.php** qui prend en charge le chargement des « chemins d'initialisation » et à partir d'un graphe des dépendances déterminé parla spécialisation des «
+chemins d'initialisations » nécessaires au fonctionnement de l'application.  Patchwork linéarise le graphe en partant du « chemin d'initialisation » le plus «
+spécialisé » au moins « spécialisé », le chargement de l'environnement des requêtes s'effectue en partant du chemins d'initialisation l moins « spécialisé » àau
+chemin de spécialisation le plus « spécialisé » (la vérification de cette environnement passe  par une scuccession de tests notamment de la version de PHP, de
+la plateforme de travail et de l'encodage), une fois cet environnement d'éxécution garanti, il ne reste plus qu'à éxécuter chaque « requête d'éxecution » selon
+l'ordre défini par le graphe des dépendances, donc du plus « spécialisé » au moins « spécialisé ». A ce stade l'application est dite configurée, il n'y a plus
+qu'à mettre le cache de la séquence dans le fichier **.patchwork.php** de l'application générée. 
+
+A l'issue de cette étape d'initialisation, l'application posséde un environnement qui lui est personnalisé. Ainsi il n'est plus nécessaire de relancer tout le
+processus d'initialisation, il suffira de charger **.patchwork.php** via le fichier index.php de l'application. (Optimisation)
+
+Aussi, si l'utilisateur procéde à des modifications de sa version de PHP ou encore de son système d'exploitation, il suffit de procéder à un simple vidage de
+cache et de relancer l'application qui se verra crée par Patchwork un nouvel environnement de travail adaptée à la nouvelle configuration logcielle ou
+matérielle de l'utilisateur.
+
+#PORTABILITE :
+
+	La portabilité d'une application réside dans le fait de pouvoir être fonctionnelle sur des environnement toujours plus divers et variés, donc garantir
+la portabilité est une nécessité si l'on souhaite maintenir une certaine robustesse au temps pour une application donnée.  	
+
+	Patchwork est codé en PHP objet et recommande fortement son utilisation pour le développement d'applications. Le PHP étant un langage/plate-forme sans
+cesse amélioré et corrigé, il est important de garantir une assez grande compatibilité de son produit. Dans cette logique, Patchwork a été construit en gardant
+la portabilité à l'esprit, ainsi il dispose d'outils rendant son installation et utilisation simplifiées du point de vue de l'utilisateur, qui n'a pas à se
+soucier des problèmes de compatibilités régulièrement rencontrés en PHP entre différentes versions. 
+
+	Et patchwork attaque le soucis de la portabilité en initialisant un environnement spécifique à l'application. 
+
+	Le mécanisme d'initialisation défini dans la partie **Bootstrapper.php** a pour but de maintenir une grande portabilité des applications, puisque
+chacune possède son environnement d'initialisation personnalisé défini dans le fichier **.patchwork.php** et annule une certaine dépendance de l'environnement
+de base dans lesquelles les applications ont été crées car chaque fichier possède un bout de patchwork. 
+
+/*	
+	Les rôles des fichiers (boostrapper.php), Manager.php, bootup.patchwork.php et config.patchwork.php seront détaillés puisque que ce sont ces fichiers là
+qui garantissent la portabilité de patchwork. */
+
+	La portabilité d'une application php revêt 3 niveaux, le premier la version de php, le second le système d'exploitation et le troisième l'encodage (le
+serveur web pose rarement problème notamment grâce à la généralisation de l'utilisation du serveur apache). L'encodage étant souvent fonction de la version de
+PHP, dans la mesure où elle est gérée par des fonctions PHP, ce 3e point est souvent résolu en même temps que le premier.
+
+	Dans le cas de Patchwork (se sont les fichiers de type bootup.* /se sont les fichiers **patchwork.php** )qui s'occupent de mettre en place les actions
+de portage (modification d'un environnement pour qu'il puisse fonctionner sur un autre environnement) liées en partie à la version de PHP. 
+
+	##1 LA FONCTION OVERRIDE :
+
+	Comment cela se passe-t-il ? Entre différentes versions de php, certaines fonctions peuvent ne pas exister ou fonctionner de façons différentes, donc
+Patchwork est codé avec (la dernière version stable) de PHP et à l'aide de la fonction **override()**, implantée dans le fichier **Manager.php**, qui a pour but
+: Soit lorsqu'on a une version de php antérieur, de charger les fonctions ou arguments de fonctions non existants dans la version de php de l'utilisateur en
+introduisant leur fonctionnement dans d'autres variables (flou).  Soit lorsqu'un bug est connu pour une fonction précise, de corriger ce bug souvent en la
+remplaçant par une fonction corrigée.
+
+Un exemple de la fonction d'utilisation de la fonction **override()** : 
+
+ <code>override('ini_set', 	'patchwork_ini_set', 	array('$v ', '$v')); </code>
+
+	Le premier argument 'ini_set' est une fonction native de PHP, elle est désormais associé au deuxième argument 'patchwork_ini_set', le troisième argument
+est un tableau dont le nombre d'éléments définis le nombre de paramètre de la fonction **patchwork_ini_set()**.
+
+
+	##2 LES FICHIERS BOOTUP:
+
+	Patchwork dispose d'un certain nombres d'outils tel que les fichiers Bootup qui sont chargés de s'assurer du portage des applications.
+
+	En particulier ce sont les fichiers **bootup.patchwork.php** qui jouent le rôle d'arbitre pour la fonction **override()** et qui disent à quel moment
+elle doit s'éxécuter et de quelle manière.  Le mécanisme est assez simple, une succession de test sur la version PHP.  Ils prennent en charge l'absence de
+fonctions liés aux versions de PHP, l'absence de fonctions/extensions liés à l'encodage Utf-8 puisque Patchwork est codé en Utf-8. Ainsi ils gèrent le portage
+des fonctions liés aux différences entre les versions de PHP ou alors entre 2 systèmes d'exploitation(Ex : Linux/Windows).
+
+(//////////////Pas spécialement original à patchwork, peu détaillé//////////////) Les fichiers **bootup.realpath.php** et **bootup.override.php** quant à eux
+gèrent la portabilité au niveau des systèmes. 	/* soit à des incompatibilités de chemin de fichier. Utilisation de « \ » pour Windows et « / », plus  */ 
+
+
+#PARSER -------
+
+	Parmi les outils originaux et puissants de Patchwork, on peut compter le Parser. 
+
+	Le Parser est un outil qui va permettre de parser un fichier, c'est-à-dire de l'analyser token par token tout en déterminant le type de chaque token.
+Lorsqu'on souhaite apporter des modifications à un fichier à certains moments non-prédéterminées ou alors des modifications spécifiques à une circonst ance, le
+parser est un moyen idéal d'y parvenir sans modifier pour autant la structure du fichier.  Ainsi il existe selon les modifications que l'on souhaite apporter un
+ensemble d'options à appliqués sur le fichier cible. 	La procédure de parserisation est la suivante : on sélectionne un fichier dont on prévlève le contenu,
+on indique la modification à effectuer et on l'applique au fichier.  L'utilisation du Parser peut servir principalement à deux choses. Le PHP étant un langage
+qui se compile à chaque requête du côté serveur, certaines variables natives à PHP font référence à des valeurs précises et à chaque compilation, PHP doit aller
+chercher la valeur de ses variables , or  avec le parser, les variables sont remplacés par leur valeur avant la compilation, ce qui permet un gain de temps et
+une augmentation de la performance (micro optimisation). Aussi il est nécessaire d'utiliser le Parser pour les constantes dynamiques (« magique ») avant
+compilation sinon Patchwork ne fonctionnera pas.              
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Patchwork gère donc les erreurs, bugs et incompatibilités suivantes :
+
+PHP < 5.2.0.  ------------
+* La fonction substr_compare(stra, strb, intc, intd), qui permet de comparer stra à partir de la position intc avec srtb pendant intd caractères, ne devrait pas
+* donner un avertissement en sortie et retournait FALSE si le paramère intd est égale à la longueur du paramètre stra. Par ailleurs  l'erreur invalide suivante
+* est renvoyée : «La position de départ (intc) ne peut pas dépasser la longueur du paramètre stra » même lorsque zéro est spécifiée comme position de départ.
+ 
+
+* Sur les plate-formes MS-Windows, la récursivité de la fonction mkdir(PATH, true) est inopérante lorsque le chemin passé en argument possède un dossier «
+* super-utilisateur » non-existant. Ex : si PATH='\toto\titi\tata' et que le dossier toto n'existe pas, mkdir renvoie une erreur en sortie « No such file or
+* directory in xxx.php on line xxx » alors qu'il devrait normalement crée le dossier toto puis titi etc....  Les fonctions setcookie() et setrawcookie(), qui
+* servent à l'envoi des cookies, ne possèdent pas l'option httponly. Or cette option lorsqu'elle est activée permet de rendre le cookie accessible uniquement
+* par le protocole HTTP. Cela signifie que le cookie ne sera pas accessible via des langages de scripts, comme Javascript. Cette configuration permet de limiter
+* les attaques via XSS.
+
+* Sur les plate-formes MS-WINDOWS, la fonction file_exits(), permettant la vérification de l'existence d'un fichier, interprète mal les fichiers dont le nom est
+* d'une certaine taille. (Rajouter un EX?)
+
+* Sur MS-WINDOWS, la fonction realpath() n'interprète pas la lettre correspondant au nom du driver dans un path, Exemple : realpath('C:\WINDOWS') retourne
+* 'C:\WINDOWS' mais  
+realpath('c:\WINDOWS') retourne 'c:\WINDOWS'  au lieu de renvoyer 'C:\\WINDOWS', cette erreur rend par exemple impossible la comparaison de PATH dans le cas où
+une des chaînes de caractères commencerait par 'c...' et les autres 'C...'
+
+* Sur les versions de Solaris postérieurs à la version 5.8, la fonction getcwd() ne renvoie pas le bon répertoire de travail fichiers/dossiers dont
+* l'utilisateur ne possède pas le droit de lecture, même si il possède le droit d'éxecution du dossier parent. Cela a pour conséquence d'induire les fonctions
+* require() et include () en erreur si elles sont utilisées en utilisant le résultat de getcwd(). 
+
+
+PHP = 5.2.9.  ------------
+* La fonction array_unique(), utile pour procéder à la suppression de doublons dans un tableau, gère mal la comparaison de certaines chaines de caractères.
+* Ainsi si on teste array_unique() avec le tableau suivant : $array=array('400.000', '400') ; arraytest1=array_unique($array) ; var_dump($arraytest1) renverra
+* uniquement 400.000, 400 a été traité comme un doublon de 400.000 par la array_unique(). 
+
+PHP < 5.3.0.  ------------
+* Avec l'arrivée de php 5.3.0, l'utilisateur a pu constater l'impltémentation des espaces de noms représentés par « \ », utiles pour la définition d'aliases
+* pour les noms de classes  et offrant la possibilité « d'encapsuler » l'ensemble des classes d'une bibliothèque dans un espace de noms. Il peut donc exister
+* des soucis de compatabilité avec différentes versions de PHP ne gérant pas les espaces de noms.
+
+* La fonction spl_autoload_register() ne possède pas l'argument $prepend qui permet d'ajouter une fonction au début de la pile de l'autoloader au lieu de
+* l'ajouter à la fin de la pile. 
+
+* De plus spl_autoload_register() ne renvoie pas dans certains cas les instances d'objets mais plutôt les noms de classe, ce qui provoque de nombreuses erreurs,
+* notamment avec l'utilisation des exceptions. (A compléter).
+
+	L'encodage Utf-8: 
+	
+PHP < 5.2.0.  ------------
+* Les méthodes de caractères multi-octets développées pour résoudre les problèmes liés aux langues représentées grâce à un jeu de plus de 128 caractères sont
+* absentes, ce qui est un grand handicap lorsqu'on souhaite manipuler des chaînes encodées en multi-octets en PHP. 
+
+PHP < 5.2.3.  ------------
+* Les fonctions htmlspecialchars() et htmlentities(),  utiles pour convertir des entités HTML en leur équivalent dans la chaîne string, ne possédent pas
+* l'argument $double_encode qui permet de ne pas avoir d'encodage automatique des entités html existantes. 
+
+	Hors de toute versions :
+* Sur certains systèmes la fonction iconv(), qui permet la conversion d'une chaîne de caractère définie en un jeu de caractères dans un autre, n'existe pas elle
+* est remplacé par la fonction libiconv(). Afin d'uniformiser le tout, patchwork transforme crée la fonction iconv() qui remplace la fonction libiconv().              
+
+
+(POUR LA DOC ACTUELLE, PAS IMPORTANT)
+//////INTRODUCTION///////
+
+Patchwork a été développé avec un esprit de simplicité pour l'utilisateur mais aussi avec un soucis de performance, il dispose donc d'outils rendant son
+utilisation simple mais qui garantissent un niveau de précision élevé.  La simplicité de Patchwork réside dans son mode de composition des pages dans le
+navigateur, la superposition de classes et sa portabilité, c'est-à-dire qu'il prend en charge les principales modificiations d'environnement, qu'elles soient
+liés au système d'exploitation, la version du php ou encore le serveur de développement, rendant ainsi son installation et utilisation simplifiée du point de
+vue de l'utilisateur. On y retrouve l'originalité de patchwork.  Quant à sa performance, elle réside dans l'utilisation des caches, sous condition d'avoir
+Javascript activé, c'est le navigateur qui se charge d'assembler les templates. Ainsi au lieu d'utiliser uniquement un cache sur le serveur, on a une
+possibilité de mise en cache de morceaux de pages par le navigateur ou le proxy, le gros avantage est que le serveur est maintenant déchargé de toutes les
+étapes d’exécution des templates, ainsi l’utilisation maximale du cache HTTP fait que la bande passante et le processeur ne sont bien souvent plus utilisés que
+pour les données qui changent effectivement d’une page à l’autre. ce qui permet de faire des applications très performantes.  Parmi les principales
+caractéristiques de l’architecture on peut noter que le système fonctionne à 100% en UTF-8, il permet aussi l’internationalisation de template ce qui permettra
+dans le futur de faire des applications multilingues  Ce tutoriel va donc vous apprendre comment installer patchwork puis qu'elle a été sa logique afin que vous
+puissiez vous en servir par la suite.  
+
+/////PRE-REQUIS//// 
+	
+	Afin de garantir un fonctionnement minimal de Patchwork, il est nécessaire que ces trois conditions soient remplies : 
+
+PHP (version 5.1.4 ou supérieur) Un système d'exploitation (Linux, MacOS, Windows ,...) Un serveur HTTP (Apache 2 conseillé)
+
+	Apache est conseillé car il justifie d'une très grande flexibilité puisqu'il fonctionne sur les systèmes Linux, MacOS et Windows. 
+
+/////INSTALLATION/////
+	Pas de modifications à apporter pour l'instant, si ce n'est sur les commenades d'accés au dépôt et la procédure d'install.
+
+
+
+
+
+
+	 	
+
+

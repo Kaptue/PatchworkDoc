@@ -4,7 +4,9 @@ ESSAI DE DOCUMENTATION
 INITIALISATION : BOOTSTRAPPER.PHP
 =================================
 	
-	L'initialisation de l'environnement d'une application pour patchwork se fait au niveau du Bootstrapper.php de l'application, c'est lui qui va procéder aux premiers tests d'environnement et passer le relais à Patchwork en appellant les fichiers nécessaire. Normalement le fichier **.patchwork.php** n'est pas présent à la première initialisation, il est crée. A ce niveau en parallèle du fichier **config.patchwork.php**, qui s'assure de définir l'environnement de fonctionnement général de patchwork (préparation à l'encodage, mise en place des variables du serveur nécessaire), c'est le fichier **Manager.php** qui prend en charge le chargement des « chemins d'initialisation » et à partir d'un graphe des dépendances déterminé parla spécialisation des « chemins d'initialisations » nécessaires au fonctionnement de l'application. Patchwork linéarise le graphe en partant du « chemin d'initialisation » le plus « spécialisé » au moins « spécialisé », le chargement de l'environnement des requêtes s'effectue en partant du chemins d'initialisation l moins « spécialisé » àau chemin de spécialisation le plus « spécialisé » (la vérification de cette environnement passe  par une scuccession de tests notamment de la version de PHP, de la plateforme de travail et de l'encodage), une fois cet environnement d'éxécution garanti, il ne reste plus qu'à éxécuter chaque « requête d'éxecution » selon l'ordre défini par le graphe des dépendances, donc du plus « spécialisé » au moins « spécialisé ». A ce stade l'application est dite configurée, il n'y a plus qu'à mettre le cache de la séquence dans le fichier **.patchwork.php** de l'application générée. 
+	L'initialisation de l'environnement d' d'une application pour patchwork se fait au niveau du Bootstrapper.php de l'application, c'est lui qui va procéder aux premiers tests d'environnement et passer le relais à Patchwork en appellant les fichiers nécessaire. 
+Normalement le fichier **.patchwork.php** n'est pas présent à la première initialisation, il est crée. A ce niveau en parallèle du fichier **config.patchwork.php**, qui s'assure de définir l'environnement de fonctionnement général de patchwork (préparation à l'encodage, mise en place des variables du serveur nécessaire), c'est le fichier **Manager.php** qui prend en charge le chargement des « chemins d'initialisation » et à partir d'un graphe des dépendances déterminé parla spécialisation des « chemins d'initialisations » nécessaires au fonctionnement de l'application. 
+Patchwork linéarise le graphe en partant du « chemin d'initialisation » le plus « spécialisé » au moins « spécialisé », le chargement de l'environnement des requêtes s'effectue en partant du chemins d'initialisation l moins « spécialisé » àau chemin de spécialisation le plus « spécialisé » (la vérification de cette environnement passe  par une scuccession de tests notamment de la version de PHP, de la plateforme de travail et de l'encodage), une fois cet environnement d'éxécution garanti, il ne reste plus qu'à éxécuter chaque « requête d'éxecution » selon l'ordre défini par le graphe des dépendances, donc du plus « spécialisé » au moins « spécialisé ». A ce stade l'application est dite configurée, il n'y a plus qu'à mettre le cache de la séquence dans le fichier **.patchwork.php** de l'application générée. 
 
 A l'issue de cette étape d'initialisation, l'application posséde un environnement qui lui est personnalisé. Ainsi il n'est plus nécessaire de relancer tout le processus d'initialisation, il suffira de charger **.patchwork.php** via le fichier index.php de l'application. (Optimisation)
 
@@ -129,12 +131,4 @@ Un serveur HTTP (Apache 2 conseillé)
 
 /////INSTALLATION/////
 	Pas de modifications à apporter pour l'instant, si ce n'est sur les commenades d'accés au dépôt et la procédure d'install.
-
-
-
-
-
-
-	 	
-
 
