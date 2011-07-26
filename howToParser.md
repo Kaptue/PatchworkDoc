@@ -5,65 +5,72 @@ HOW TO : PARSER
 PARSER
 ------
 
-Le Parser désigne un mécanisme, implémenté dans la classe Patchwork_PHP_Parser, qui va permettre de réaliser la tokenisation 
+Le Parser désigne un mécanisme, implémenté dans la classe Patchwork_PHP_Parser
+du fichier **Parser.php**, qui va permettre de réaliser la tokenisation 
 d'un fichier, c'est-à-dire de l'analyser token par token tout en associant à
 chaque token une étiquette (voir http://li.php.net/manual/fr/tokens.php
-				pour les étiquettes).
+pour les étiquettes).
 Il permet via la manipulation des étiquettes liées au token d'obtenir des
 informations, d'apporter des modifications précises sur un fichier à l'aide
-d'un plugin qui est en fait une classe héritière de la classe
-Patchwork_PHP_Parser.
+de plugins qui sont en fait des classes héritières à celle du Parser.
+
 
 PATCHWORK ET LES PARSERS
 ------------------------
 
-Les parsers dans Patchwork sont utilisés par le mécanisme d'autoloading contenu dans le fichier **Autoloader.php**, en fait c'est le préprocesseur qui fait
-appel aux classes via l'autoload et lance le parser, ainsi le fichier est parsé avant son inclusion, utilisation ou autre. 
+Le Parser dans Patchwork est utilisé par le mécanisme d'autoloading contenu 
+dans le fichier **Autoloader.php**, en fait c'est le préprocesseur qui fait
+appel aux classes via l'autoload et lance le parser et tous les plugins
+associés, ainsi le fichier est parsé avant son inclusion, utilisation ou 
+autre. 
 
 Le PHP étant un langage qui se compile à chaque requête du côté serveur,
-   certaines constantes natives à PHP faisant référence à des valeurs précises
-   nécessites qu'à chaque compilation, PHP aille
-   chercher la valeur de ses variables , or  avec le parser, les constantes sont
-   remplacées par leur valeur avant la compilation, ce qui permet un gain de temps et
-   une augmentation de la performance (micro-optimisation). Aussi il est nécessaire d'utiliser le Parser pour les constantes dynamiques (« magique ») avant
-   compilation sinon Patchwork ne fonctionnera pas. 
+certaines constantes natives à PHP faisant référence à des valeurs précises
+nécessites qu'à chaque compilation, PHP aille chercher la valeur de ses
+variables , or avec le parser, les constantes sont remplacées par leur
+valeur avant la compilation, ce qui permet un gain de temps et une augmentation 
+de la performance (micro-optimisation). Aussi il est nécessaire d'utiliser 
+le Parser pour les constantes dynamiques (« magiques ») avant compilation 
+sinon Patchwork ne fonctionnera pas. 
 
-   Exemple : À sa compilation par php la constante magique <code>__FILE__</code>
+   Exemple : À sa compilation par php la constante magique "__FILE__"
    est remplacée par la valeur située dans le cache qui peut être différente de la
-   valeur du fichier source, or ce n'est pas ce qu'on souhaite, ainsi en utilisant le parser adéquate, <code>__FILE__</code> est remplacée par sa valeur d'après le fichier source. 
+   valeur du fichier source, or ce n'est pas ce qu'on souhaite, ainsi en utilisant le 
+   parser adéquate, "__FILE__" est remplacée par sa valeur d'après le fichier source. 
 
-   Le parser peut également être utilisé pour la portabilité, en particulier
-   lorsqu'une syntaxe a été supprimée d'une version à l'autre de php. 
+Le parser peut également être utilisé pour la portabilité, en particulier
+lorsqu'une syntaxe a été supprimée d'une version à l'autre de php. 
 
-   Dans patchwork on distingue deux types de plugins de parser. Les parsers
-   spécifiques à Patchwork et les parsers indépendants de Patchwork mais améliorant son fonctionnement.
+En fait le fichier **Parser.php** dans lequel est contenu le mécanisme du parser
+ne fait pas grand chose seul, il sert plutôt d'environnement de base pour les
+plugins qui vont venir se greffer à lui et utiliser des outils prédéfinis. 
 
 ##A. Comment la tokenisation s'effectue-t-elle ?
 
-   Lorsque le Parser reçoit un fichier php en paramètre, il décompose chaque groupe
-   de caractères en un token qu'il identifie à une étiquette native à php, dans le
-   cas où le token ne possède pas d'étiquettes dans php, le token lui-même fait
-   office d'étiquette.
+Lorsque le Parser reçoit un fichier php en paramètre, il décompose chaque groupe
+de caractères en un token qu'il identifie à une étiquette native à php, dans le
+cas où le token ne possède pas d'étiquettes dans php, le token lui-même fait
+office d'étiquette.
 
 Exemple:	
 
    En entrée : array();
 
    Sortie    : 		Source code   Token type
-   array			T_ARRAY
-   (			    (	
+   					array			T_ARRAY
+   					(			    (	
 					)			    )
    
    par l'exemple on voit que l'étiquette associée au token array est T_ARRAY, par
    contre le token "(" a pour étiquette lui-même.
 
-   Le résultat de la tokenisation est stocké dans un tableau que l'on peut
-   parcourir à l'aide des variables $lastType pour le token précédent et $penuType
-   l'avant dernier token, et de la méthode <code>&getNextToken();</code> pour le
-   token suivant.
+Le résultat de la tokenisation est stocké dans un tableau que l'on peut
+parcourir à l'aide des variables $lastType pour le token précédent et $penuType
+l'avant dernier token, et de la méthode <code>&getNextToken();</code> pour le
+token suivant.
 
-   Par la suite nous verrons qu'il est possible d'ajouter des étiquettes à un token
-   notamment à l'aide de la méthode <code>createToken();</code>.
+Par la suite nous verrons qu'il est possible d'ajouter des étiquettes à un token
+notamment à l'aide de la méthode <code>createToken();</code>.
 
 ##B. Comment parser un fichier
 
