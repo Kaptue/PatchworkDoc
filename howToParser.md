@@ -45,7 +45,7 @@ Le PHP étant un langage qui se compile à chaque requête du côté serveur,
    cas où le token ne possède pas d'étiquettes dans php, le token lui-même fait
    office d'étiquette.
 
-<code>Exemple:	
+Exemple:	
 
    En entrée : array();
 
@@ -53,7 +53,6 @@ Le PHP étant un langage qui se compile à chaque requête du côté serveur,
    array			T_ARRAY
    (			    (	
 					)			    )
-</code>
    
    par l'exemple on voit que l'étiquette associée au token array est T_ARRAY, par
    contre le token "(" a pour étiquette lui-même.
