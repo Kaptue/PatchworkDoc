@@ -7,7 +7,7 @@ PARSER
 
 Le Parser désigne un mécanisme, implémenté dans la classe Patchwork_PHP_Parser, qui va permettre de réaliser la tokenisation 
 d'un fichier, c'est-à-dire de l'analyser token par token tout en associant à
-chaque token une étiquette (voir [1]: http://li.php.net/manual/fr/tokens.php
+chaque token une étiquette (voir http://li.php.net/manual/fr/tokens.php
 				pour les étiquettes).
 Il permet via la manipulation des étiquettes liées au token d'obtenir des
 informations, d'apporter des modifications précises sur un fichier à l'aide
@@ -45,48 +45,55 @@ Le PHP étant un langage qui se compile à chaque requête du côté serveur,
    cas où le token ne possède pas d'étiquettes dans php, le token lui-même fait
    office d'étiquette.
 
-#####Exemple:	
+<code>Exemple:	
 
-   En entrée : <code>array()</code>
+   En entrée : array();
 
-   Sortie    : <code>Source code   Token type
+   Sortie    : 		Source code   Token type
    array			T_ARRAY
    (			    (	
-					)			    )</code>
-
+					)			    )
+</code>
+   
    par l'exemple on voit que l'étiquette associée au token array est T_ARRAY, par
    contre le token "(" a pour étiquette lui-même.
 
    Le résultat de la tokenisation est stocké dans un tableau que l'on peut
    parcourir à l'aide des variables $lastType pour le token précédent et $penuType
-   l'avant dernier token, et de la méthode <code>&getNextToken()</code> pour le
-   token suivant. 
+   l'avant dernier token, et de la méthode <code>&getNextToken();</code> pour le
+   token suivant.
 
    Par la suite nous verrons qu'il est possible d'ajouter des étiquettes à un token
-   notamment à l'aide de la méthode <code>createToken</code>.
+   notamment à l'aide de la méthode <code>createToken();</code>.
 
 ##B. Comment parser un fichier
 
-#####1. Créer et ouvrir un fichier **parser.php**
+#####1. 
+Créer et ouvrir un fichier **parser.php**
 
-#####2. Inclure le fichier **Parser.php** en tapant <code>require 'le chemin du 
-   fichier' , si vous vous trouvez dans le dossier Patchwork, insérer cette ligne 
+#####2. 
+Inclure le fichier **Parser.php** en tapant <code>require 'le chemin du 
+   fichier'</code>, si vous vous trouvez dans le dossier Patchwork, insérer cette ligne 
    de code directement : <code>require
    './class/Patchwork/PHP/Parser.php';</code>
 
-#####3. On récupère dans une variable le contenu du fichier que l'on va parser
+#####3. 
+On récupère dans une variable le contenu du fichier que l'on va parser
    avec la fonction <code>$contenu = file_get_contents('Nom du fichier
 				   cible');</code>
 
-#####4. On instancie la classe, par défaut la syntaxe suivante suffit :
+#####4. 
+On instancie la classe, par défaut la syntaxe suivante suffit :
    <code> $parser = new Patchwork_PHP_Parser; </code>
 
-#####5. On appelle la méthode <code>parse($contenu)</code>. On peut
+#####5. 
+On appelle la méthode <code>parse($contenu)</code>. On peut
    récupérer le résultat dans une variable afin de l'injecter dans un fichier 
    en suivant la syntaxe suivante : <code> file_put_contents('fichier cible',
 				   buffer); </code>
 
-#####6. Pour éxécuter le parser <code> php parser.php </code> dans un
+#####6. 
+Pour éxécuter le parser <code> php parser.php </code> dans un
    terminal. Dans le ca où
    vous avez choisi de rediriger le résultat dans un fichier, vous pouvez
    l'ouvrir avec votre éditeur de texte et constatez les modifications
