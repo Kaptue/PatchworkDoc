@@ -1,6 +1,12 @@
 HOW TO : PARSER
 ===============
 
+INTRODUCTION
+------------
+
+Le but de ce tutoriel est en plus de faire une présentation générale du parser
+de Patchwork, de donner les outils nécessaires à la réalisation d'un plugin
+simple pour le parser. Des connaissances en PHP objet sont requises.
 
 PARSER
 ------
@@ -216,14 +222,53 @@ est appelée.
 Donc pour nous il s'agira d'utiliser <code>$unshiftTokens();</code> dans des
 méthodes déclenchées par les tokens "[" et "]". 
 
-À ce stade vous possédez tous les outils modulo les notions de php pour créer le
-plugin. 
+Dernière chose, notre plugin devra être capable de gérer plusieurs niveaux
+d'imbrications de tableaux sans se perdre, il ne devra jamais remplacer plus de
+crochets fermant que de crochets ouvrants et comme là on l'a vu, il existe un
+cas où la syntaxe crochet n'est pas génératrice d'erreur qu'il faudra être
+capable de gérer.
+
+exemple de syntaxe pouvant poser problème : <code>[[[$a[1]]]]</code>.
+
+Nous avons une imbrication d'array à l'intérieur de laquelle se trouve une
+variable dont les crochets associés ne doivent pas subir de modifications.
+
+Comment procéder à cela ? L'idée va être d'introduire une variable qui sera un
+tableau, il devra contenir un booléen, "true" si le crochet ouvrant est remplacé
+ou "false" dans le cas contraire. Et pour savoir si un crochet fermant doit être
+remplacé il suffira de regarder la valeur du dernier élément du tableau.
+
+On appelle cette variable <code>$stack = array()</code>.
+
+À ce stade vous  possédez donc tous les outils modulo les notions de php pour créer
+le plugin. 
 
 ######C Le Code
 
+On crée une classe héritière de la classe Patchwork_PHP_Parser que l'on va nommer
+Patchwork_PHP_Parser_NormalizerArray. 
+Il est conseillé d'avoir des variables et des fonctions "protected".
 
+Déclaration des variables <code>$stack = array()</code> et <code>$callbacks =
+array()</code> (si besoin relire la partie précente).
 
+Création des méthodes avec la syntaxe suivante <code>protected function 
+tagOpenBracket</code> et <code>protected function tagCloseBracket</code>. 
 
+tagOpenBracket : <code>if($this->stack[] = T_VARIABLE !==
+				$this->lastType))</code>
 
+Si l'étiquette du token précédent est un T_VARIBABLE alors on ajoutera false à la
+variable <code>$stack</code> sinon true. Il ne reste plus qu'à faire un
+<code>return unshiftTokens(array(T_ARRAY, 'array'), '(');</code>
 
+tagCloseBracket : <code>if($this->stack && array_pop($this->stack))</code>
+
+on s'assure que $this->stack n'est pas vide et on regarde la dernière valeur du
+tableau associé à la variable $stack. Si les deux conditions sont vérifiées on
+n'a plus qu'à éxécuter le code suivant <code>return
+$this->unshiftTokens(')');</code>
+
+On s'assure d'avoir fermé toutes les parenthèses. Et voilà votre premier plugin
+php patchwork prêt à l'emploi.
 
