@@ -12,7 +12,7 @@ PARSER
 ------
 
 Le Parser désigne un mécanisme, implémenté dans la classe Patchwork_PHP_Parser
-du fichier **Parser.php**, qui va permettre de réaliser la tokenisation 
+du fichier **Parser.php**, qui va permettre de réaliser la tokenization 
 d'un fichier, c'est-à-dire de l'analyser token par token tout en associant à
 chaque token une étiquette (voir http://li.php.net/manual/fr/tokens.php
 pour les étiquettes).
@@ -39,10 +39,10 @@ de la performance (micro-optimisation). Aussi il est nécessaire d'utiliser
 le Parser pour les constantes dynamiques (« magiques ») avant compilation 
 sinon Patchwork ne fonctionnera pas. 
 
-   Exemple : À sa compilation par php la constante magique "__FILE__"
-   est remplacée par la valeur située dans le cache qui peut être différente de la
-   valeur du fichier source, or ce n'est pas ce qu'on souhaite, ainsi en utilisant le 
-   parser adéquate, "__FILE__" est remplacée par sa valeur d'après le fichier source. 
+**Exemple** : À sa compilation par php la constante magique "__FILE__"
+est remplacée par la valeur située dans le cache qui peut être différente de la
+valeur du fichier source, or ce n'est pas ce qu'on souhaite, ainsi en utilisant le 
+parser adéquate, "__FILE__" est remplacée par sa valeur d'après le fichier source. 
 
 Le parser peut également être utilisé pour la portabilité, en particulier
 lorsqu'une syntaxe a été supprimée d'une version à l'autre de php. 
@@ -58,72 +58,65 @@ de caractères en un token qu'il identifie à une étiquette native à php, dans
 cas où le token ne possède pas d'étiquettes dans php, le token lui-même fait
 office d'étiquette.
 
-Exemple:	
+**Exemple** : array();
 
-   En entrée : array();
-
-   Sortie    : 		Source code   Token type
-   					array			T_ARRAY
-   					(			    (	
-					)			    )
+	Sortie    | Source code | Token type
+   	----------|-------------|------------
+   			  |	 array		|	T_ARRAY
+   			  |	 (			|   (	
+			  |	 )			|   )
    
-   par l'exemple on voit que l'étiquette associée au token array est T_ARRAY, par
-   contre le token "(" a pour étiquette lui-même.
+par l'exemple on voit que l'étiquette associée au token array est T_ARRAY, par
+contre le token "(" a pour étiquette lui-même.
 
-Le résultat de la tokenisation est stocké dans un tableau que l'on peut
-parcourir à l'aide des variables $lastType pour le token précédent et $penuType
-l'avant dernier token, et de la méthode <code>&getNextToken();</code> pour le
-token suivant.
+Le résultat de la tokenization est stocké dans un tableau que l'on peut
+parcourir à l'aide des variables <code>$lastType</code> pour le token précédent
+et <code>$penuType</code> l'avant dernier token, et de la méthode 
+<code>&getNextToken();</code> pour le token suivant.
 
 Par la suite nous verrons qu'il est possible d'ajouter des étiquettes à un token
 notamment à l'aide de la méthode <code>createToken();</code>.
 
 ##B. Comment parser un fichier
 
-#####1. 
-Créer et ouvrir un fichier **parser.php**
+**1.** Créer et ouvrir un fichier **parser.php**
 
-#####2. 
-Inclure le fichier **Parser.php** en tapant <code>require 'le chemin du fichier'
+**2.** Inclure le fichier **Parser.php** en tapant <code>require 'le chemin du fichier'
 </code>, si vous vous trouvez dans le dossier Patchwork, insérer cette ligne de
 code directement : <code>require './class/Patchwork/PHP/Parser.php';</code>
 
-#####3. 
-On récupère dans une variable le contenu du fichier que l'on va parser avec la
+**3.** On récupère dans une variable le contenu du fichier que l'on va parser avec la
 fonction <code>$contenu = file_get_contents('Nom du fichier cible');</code>
 
-#####4. 
-On instancie la classe, par défaut la syntaxe suivante suffit :
-   <code> $parser = new Patchwork_PHP_Parser; </code>
+**4.** On instancie la classe, par défaut la syntaxe suivante suffit :
+<code> $parser = new Patchwork_PHP_Parser; </code>
 
-#####5. 
-On appelle la méthode <code>parse($contenu)</code>. On peutrécupérer le résultat
+**5.** On appelle la méthode <code>parse($contenu)</code>. On peutrécupérer le résultat
 dans une variable afin de l'injecter dans un fichier en suivant la syntaxe
 suivante : <code> file_put_contents('fichier cible', buffer); </code>
 
-#####6. 
-Pour éxécuter le parser <code> php parser.php </code> dans un terminal. Dans le
+**6.** Pour éxécuter le parser <code> php parser.php </code> dans un terminal. Dans le
 cas où vous avez choisi de rediriger le résultat dans un fichier, vous pouvez
 l'ouvrir avec votre éditeur de texte et constatez les modifications apportées.
 
-   À ce stade, vous ne devriez voir aucunes modifications dans le fichier cible
-   et c'est normal, pourtant la tokenisation a bien eu lieu juste qu'elle n'est
-   pas visible. 
+À ce stade, vous ne devriez voir aucunes modifications dans le fichier cible
+et c'est normal, pourtant la tokenisation a bien eu lieu juste qu'elle n'est
+pas visible. 
 
 ##C. Comment voir la tokenisation
 
-   Si vous ne possédez pas le fichier de parser **Dumper.php**, sinon aller
-   directement au grand D : 
+Si vous ne possédez pas le fichier de parser **Dumper.php**, sinon aller
+directement au grand D : 
 
-   - Revenir à l'étape 2, remplacer dans le require, le chemin du fichier
-   **Parser.php** par celui du fichier **Dumper.php**
+- Revenir à l'étape 2, remplacer dans le require, le chemin du fichier
+**Parser.php** par celui du fichier **Dumper.php**
 
-   - Sauter l'étape 3, à l'étape 4 instancier la classe, par défaut la
-   syntaxe suivante <code> new Patchwork_PHP_Parser_Dumper($parser); </code>.
+- Sauter l'étape 3, à l'étape 4 instancier la classe, par défaut la
+syntaxe suivante <code> new Patchwork_PHP_Parser_Dumper($parser); </code>.
 
-   - Exécuter le parser comme indiqué au 6. Cette fois-ci devrait être affiché
-   à l'écran avec une mise en page similaire à celle donnée en exemple plus
-   haut.
+- Exécuter le parser comme indiqué au 6. Cette fois-ci devrait être affiché
+à l'écran avec une mise en page similaire à celle donnée en exemple plus
+haut.
 
 ##D. Comment créer un plugin pour le parser
 
@@ -137,7 +130,7 @@ Comme partout en programmation, avant de se lancer dans le codage, il y a une
 chaque problème et personne, elle peut prendre un certain temps. Nous allons
 donc procéder à la résolution d'un problème que vous suivrez étape par étape.
 
-####1. Le Problème :
+### Le Problème :
 
 Dans php 3.4 une nouvelle syntaxe sera implétementé. Un tableau pourra se
 déclarer de cette manière : <code>$a=[1,4,5];</code>. Or cette syntaxe
@@ -147,7 +140,7 @@ devra implémenter cette syntaxe.
 L'exercice consiste donc à écrire un plugin qui va transformer la syntaxe
 <code>$a=[1,3,4];</code> en <code>$a=array(1,2,3);</code>. 
 
-######A Bien cibler le problème
+**A Bien cibler le problème**
 
 Il est question de remplacer le token "[" par les tokens "array" et "(" puis les
 tokens "]" par des ")". Donc une première étape consistera à identifier lors de
@@ -181,7 +174,7 @@ Et par une série de test sur tous les tokens connus (voir lien première partie
 on a déterminé (faîtes nous confiance) que le seul token pouvant précéder le 
 token "[" est "T_VARIABLE".  
 
-######B Les outils de l'implémentation
+**B Les outils de l'implémentation**
 
 Maintenant que nous avons déblayé et saisi le problème, nous allons pouvoir
 implémenter l'algorithme mais avant cela il est nécessaire que certaines
@@ -193,7 +186,7 @@ fonctionne comme un marqueur de token, c'est à dire que le plugin dit au parser
 , je veux tous les tokens "[" et "]" et à chaque tokens il applique la méthode
 associée.
 
-exemple de syntaxe : <code>$callbaks = array( 'tagOpenBracket' => '[' );</code>. 
+**exemple de syntaxe** : <code>$callbaks = array( 'tagOpenBracket' => '[' );</code>. 
  
 'tagOpenBracket', désigne la méthode et '[', le token sur lequel la méthode doit
 s'appliquer.
@@ -204,7 +197,7 @@ s'appliquer.
 nous car c'est elle qui va insérer de nouveaux tokens à la position suivante au
 moment de son appel. 
 
-exemple de syntaxe : <code>$unshiftTokens(array(T_ARRAY, 'array'), '(');
+**exemple de syntaxe** : <code>$unshiftTokens(array(T_ARRAY, 'array'), '(');
 
 le nombre d'arguments désignent le nombre de tokens à insérer, on remarque dans
 l'exemple que le premier argument est un array et pas le second. En fait comme
@@ -243,7 +236,7 @@ On appelle cette variable <code>$stack = array()</code>.
 À ce stade vous  possédez donc tous les outils modulo les notions de php pour créer
 le plugin. 
 
-######C Le Code
+**C Le Code**
 
 On crée une classe héritière de la classe Patchwork_PHP_Parser que l'on va nommer
 Patchwork_PHP_Parser_NormalizerArray. 
@@ -270,5 +263,6 @@ n'a plus qu'à éxécuter le code suivant <code>return
 $this->unshiftTokens(')');</code>
 
 On s'assure d'avoir fermé toutes les parenthèses. Et voilà votre premier plugin
-php patchwork prêt à l'emploi.
-
+php patchwork prêt à l'emploi. bien sûr c'est un plugin assez simple, si vous
+souhaitez en créer des plus compliqués n'hésitez pas à parcourir le fichier
+**Parser.php** et d'observer le rôle en détail des méthodes implémentées.
