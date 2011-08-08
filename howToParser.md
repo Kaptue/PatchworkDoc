@@ -60,7 +60,7 @@ prédéfinis.
 Lorsque le Parser reçoit un fichier php en paramètre, il analyse le flux de
 caractères contenus dans le fichier et le décompose en groupe de caractères
 qui définissent un token qu'il identifie ensuite à une étiquette native à php,
-dans lecas où le token ne possède pas d'étiquettes dans php, le token lui-même
+dans le cas où le token ne possède pas d'étiquettes dans php, le token lui-même
 fait office d'étiquette.
 
 **Exemple** : array();
@@ -110,7 +110,7 @@ Dans le cas où vous avez choisi de rediriger le résultat dans un fichier, vous
 pouvez l'ouvrir avec votre éditeur de texte et constatez les modifications
 apportées.
 
-À ce stade, vous ne devriez voir aucunes modifications dans fichier_cible
+À ce stade, vous ne devriez voir aucunes modifications dans le fichier_cible
 et c'est normal, pourtant la tokenization a bien eu lieu juste qu'elle n'est
 pas visible.
 
@@ -192,10 +192,10 @@ implémenter l'algorithme mais avant cela il est nécessaire que certaines
 fonctionnalités incluses dans le fichier **Parser.php** vous soient expliquées.
 
 <code>$callbacks;</code> : La variable callbaks est un array particulier,
-c'est elle qui va contenir les méthodes et les tokens associés. Cette variable
-fonctionne comme un marqueur de token, c'est à dire que le plugin dit au parser
-, je veux tous les tokens "[" et "]" et à chaque tokens il applique la méthode
-associée.
+c'est elle qui va contenir les méthodes et les étiquettes associées aux tokens.
+Cette variable fonctionne comme un marqueur de token, c'est à dire que le plugin 
+dit au parser, je veux tous les tokens ayant comme étiquette "[" et "]" et à chaque 
+token reçu il applique la méthode associée.
 
 **exemple de syntaxe** : <code>$callbaks = array( 'tagOpenBracket' => '[' );</code>.
 
