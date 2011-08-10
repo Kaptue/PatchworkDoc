@@ -187,10 +187,10 @@ Et par une série de test sur tous les tokens connus (voir lien première partie
 on a déterminé que les seuls tokens pouvant dans certains cas précéder le token 
 "[" sont "]", "T_VARIABLE" et "}". 
 
-"]" lorsqu'on souhaite accéder à une valeur dans un tableau à deux dimensions ou
+"]" : lorsqu'on souhaite accéder à une valeur dans un tableau à deux dimensions ou
 plus. Exemple d'utilisation <code>$a[1][1];</code>.
 
-"}" lorsqu'on souhaite accéder à une valeur dans un tableau.
+"}" : lorsqu'on souhaite accéder à une valeur dans un tableau.
 Exemple d'utilisation <code>${"a"}[0];</code> ce qui équivaut à
 <code>$a[0];</code>
 
