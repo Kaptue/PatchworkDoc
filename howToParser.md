@@ -55,7 +55,7 @@ parser ne fait pas grand chose seul, il sert plutôt d'environnement de base
 pour les plugins qui vont venir se greffer à lui et utiliser des outils
 prédéfinis.
 
-##A. Comment la tokenisation s'effectue-t-elle ?
+##A. Comment la tokenization s'effectue-t-elle ?
 
 Lorsque le Parser reçoit un fichier php en paramètre, il analyse le flux de
 caractères contenus dans le fichier et le décompose en groupe de caractères
@@ -114,7 +114,7 @@ apportées.
 et c'est normal, pourtant la tokenization a bien eu lieu juste qu'elle n'est
 pas visible.
 
-##C. Comment voir la tokenisation
+##C. Comment voir la tokenization
 
 Si vous ne possédez pas le fichier de parser **Dumper.php** allez
 directement au grand D :
