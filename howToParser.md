@@ -143,10 +143,12 @@ donc procéder à la résolution d'un problème que vous suivrez étape par éta
 
 ### Le Problème :
 
-Dans php 5.4 une nouvelle syntaxe sera implétementé. Un tableau pourra se
-déclarer de cette manière : <code>$a=[1,4,5];</code>. Or cette syntaxe
-n'est pas valide pour les anciennes versions. On va donc créer un plugin qui
-devra implémenter cette syntaxe augmentant la portabilité de Patchwork.
+Dans php 5.4 de nouvelles syntaxe seront implétementées. Un tableau pourra se
+déclarer de cette manière : <code>$a=[1,4,5];</code> et une fonction retournant
+un tableau pourra directement être utilsée comme une variable comme ceci
+<code>renvoi_tableau()[1];</code>. Or cette syntaxe n'est pas valide pour les 
+anciennes versions. On va donc créer un plugin qui devra implémenter cette 
+syntaxe augmentant ainsi la portabilité de Patchwork.
 
 L'exercice consiste donc à écrire un plugin qui va transformer la syntaxe
 <code>$a=[1,3,4];</code> en <code>$a=array(1,2,3);</code>.
@@ -177,13 +179,20 @@ de permettre l'intégration d'une syntaxe. Aussi plutôt que de s'intéresser au
 cas où il faudrait un tableau, il est plus pertinent de s'intéresser au cas où
 l'utilisation du crochet ne constitue pas une Parse error, déjà parce que le
 nombre de possibilités d'utilisations est très faible par rapport à celui du
-tableau et aussi parce qu'en réfléchissant comme ça nous sommes sûrs d'avoir la
+tableau et aussi parce qu'en réfléchissant ainsi nous sommes sûrs d'avoir la
 liste exhaustive des cas d'utilisation d'un tableau et tous les autres cas
-constituraient des Fatal error qui relèveraient du codeur.
+constitueraient des Fatal error qui relèverent du codeur.
 
 Et par une série de test sur tous les tokens connus (voir lien première partie)
-on a déterminé (faîtes nous confiance) que le seul token pouvant précéder le
-token "[" est "T_VARIABLE". 
+on a déterminé que les seuls tokens pouvant dans certains cas précéder le token 
+"[" sont "]", "T_VARIABLE" et "}". 
+
+"]" lorsqu'on souhaite accéder à une valeur dans un tableau à deux dimensions ou
+plus. Exemple d'utilisation <code>$a[1][1];</code>.
+
+"}" lorsqu'on souhaite accéder à une valeur dans un tableau.
+Exemple d'utilisation <code>${"a"}[0];</code> ce qui équivaut à
+<code>$a[0];</code>
 
 **B Les outils de l'implémentation**
 
@@ -228,7 +237,7 @@ méthodes déclenchées par les tokens "[" et "]".
 
 Dernière chose, notre plugin devra être capable de gérer plusieurs niveaux
 d'imbrications de tableaux sans se perdre, il ne devra jamais remplacer plus de
-crochets fermant que de crochets ouvrants et comme là on l'a vu, il existe un
+crochets fermant que de crochets ouvrants et comme on l'a vu, il existe des
 cas où la syntaxe crochet n'est pas génératrice d'erreur qu'il faudra être
 capable de gérer.
 
@@ -244,7 +253,7 @@ remplacé il suffira de regarder la valeur du dernier élément du tableau.
 
 On appelle cette variable <code>$stack = array()</code>.
 
-À ce stade vous  possédez donc tous les outils modulo les notions de php pour créer
+À ce stade vous possédez donc tous les outils modulo les notions de php pour créer
 le plugin.
 
 **C Le Code**
