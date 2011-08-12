@@ -225,7 +225,7 @@ par contre la suivante ne l'est pas <code>if(0){}[1];</code> (2).
 cette expression peut être n'importe quoi. Par contre si "}" est directement 
 précédé par "{" ou ";" on est dans le cas (2) d'une parse error.
 
-Et donc la variable $types, que l'on va parcourir via une boucle en partant de 
+Et donc la variable <code> $types </code>, que l'on va parcourir via une boucle en partant de 
 la fin, va nous permettre de déterminer le premier token différent "}" et le
 précédant, si il est différent de "{" ou ";" alors on ne modifiera pas le "[".
 
@@ -312,7 +312,7 @@ variable <code> $is_array; </code> et à l'aide d'un test booléen, savoir si l'
 doit remplacer le token "[". La syntaxe suivante suffit : 
 <code>if ($this->stack[] = $is_array) return unshiftTokens(array(T_ARRAY, 'array'), '(');</code> 
 
-tagCloseBracket : <code>if(array_pop($this->stack))</code>
+**tagCloseBracket** : <code>if(array_pop($this->stack))</code>
 
 on regarde la dernière valeur du tableau associé à la variable $stack. Si les 
 deux conditions sont vérifiées on n'a plus qu'à éxécuter le code suivant 
