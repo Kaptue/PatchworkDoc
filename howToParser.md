@@ -146,9 +146,9 @@ donc procéder à la résolution d'un problème que vous suivrez étape par éta
 Dans php 5.4 de nouvelles syntaxe seront implétementées. Un tableau pourra se
 déclarer de cette manière : <code>$a=[1,4,5];</code> et une fonction retournant
 un tableau pourra directement être utilsée comme une variable comme ceci
-<code>renvoi_tableau()[1];</code>. Or cette syntaxe n'est pas valide pour les 
-anciennes versions. On va donc créer un plugin qui devra implémenter cette 
-syntaxe augmentant ainsi la portabilité de Patchwork.
+<code>renvoi_tableau()[1];</code>. Or ces syntaxes ne sont pas valide pour les 
+anciennes versions. On va donc créer un plugin qui devra implémenter ces 
+syntaxes, augmentant ainsi la portabilité de Patchwork.
 
 L'exercice consiste donc à écrire un plugin qui va transformer la syntaxe
 <code>$a=[1,3,4];</code> en <code>$a=array(1,2,3);</code>.
@@ -185,7 +185,8 @@ constitueraient des Fatal error qui relèverent du codeur.
 
 Et par une série de test sur tous les tokens connus (voir lien première partie)
 on a déterminé que les seuls tokens pouvant dans certains cas précéder le token 
-"[" sont "]", "T_VARIABLE" et "}". 
+"[" sont "]", "T_VARIABLE" et "}". À cette liste il faut rajouter le caractère
+")" qui sera autorisé dans certains cas à partir de php 5.4.
 
 "]" : lorsqu'on souhaite accéder à une valeur dans un tableau à deux dimensions ou
 plus. Exemple d'utilisation <code>$a[1][1];</code>.
@@ -212,6 +213,25 @@ token reçu il applique la méthode associée.
 s'appliquer.
 
 <code>$lastType;</code> : Permet d'accéder au prédécent token.
+
+<code>$types</code> : C'est un tableau contenant tous les tokens déjà passés au
+parser, cette variable est nécessaire parce qu'il existe un token "}" qui
+dans certains cas accepte le "[" comme caractère suivant et dans ton cas non.
+
+**exemple** : <code>${${b[0]}}[1];</code> (1), cette syntaxe est valide en php 
+par contre la suivante ne l'est pas <code>if(0){}[1];</code> (2).
+
+(1) en fait "}" peut être suivi d'un "[" si "}" est précédé d'une expression,
+cette expression peut être n'importe quoi. Par contre si "}" est directement 
+précédé par "{" ou ";" on est dans le cas (2) d'une parse error.
+
+Et donc la variable $types, que l'on va parcourir via une boucle en partant de 
+la fin, va nous permettre de déterminer le premier token différent "}" et le
+précédant, si il est différent de "{" ou ";" alors on ne modifiera pas le "[".
+
+pour se faire on utilisera la fonction <code>end();</code> qui nous fera
+parcourir le tableau à partir du dernier élément et la fonction
+<code>prev();</code> pour le remonter.  
 
 <code>$unshiftTokens();</code> : Sûrement la méthode la plus importante pour
 nous car c'est elle qui va insérer de nouveaux tokens à la position suivante au
@@ -246,15 +266,20 @@ exemple de syntaxe pouvant poser problème : <code>[[[$a[1]]]]</code>.
 Nous avons une imbrication d'array à l'intérieur de laquelle se trouve une
 variable dont les crochets associés ne doivent pas subir de modifications.
 
-Comment procéder à cela ? L'idée va être d'introduire une variable qui sera un
+Comment procéder à cela ? L'idée va être d'introduire deux variables. La
+première sera un
 tableau, il devra contenir un booléen, "true" si le crochet ouvrant est remplacé
-ou "false" dans le cas contraire. Et pour savoir si un crochet fermant doit être
+ou "false" dans le cas contraire. Ainsi pour savoir si un crochet fermant doit être
 remplacé il suffira de regarder la valeur du dernier élément du tableau.
 
-On appelle cette variable <code>$stack = array()</code>.
+On appelle cette variable <code>$stack = array()</code>. La deuxième variable
+, <code>$is_array();</code>, sera justement le booléen à introduire dans la 
+variable <code>$stack = array();</code>, par défaut sa valeur est "true" mais 
+elle passera à "false" si l'on se trouve dans l'un des cas d'utilisation
+autorisée de la syntaxe "[". 
 
-À ce stade vous possédez donc tous les outils modulo les notions de php pour créer
-le plugin.
+À ce stade vous possédez donc tous les outils modulo les notions de php pour 
+créer le plugin. 
 
 **C Le Code**
 
@@ -268,19 +293,30 @@ array()</code> (si besoin relire la partie précente).
 Création des méthodes avec la syntaxe suivante <code>protected function
 tagOpenBracket</code> et <code>protected function tagCloseBracket</code>.
 
-tagOpenBracket : <code>if($this->stack[] = T_VARIABLE !==
-				$this->lastType))</code>
+**tagOpenBracket** : déclaration de la variable <code> $is_array() = true; 
+</code>. 
+À l'aide d'un switch on vérifie l'étiquette du token précédent, si elle
+correspond à un 
+T_VARIBABLE, ")" et "]" alors <code> is_array() = false </code>. Dans le cas 
+où l'étiquette du token précédent est un "}", on récupère dans la variable
+$token l'ensemble des étiquettes de tokens déjà parsées <code> $token =& 
+$this->types; </code> puis on se positionne à la fin du tableau avec la syntaxe
+suivante <code> end($token); </code>, ensuite tant que le l'étiquette est un 
+"}", on remonte le tableau avec la syntaxe suivante <code>prev($token); </code>
+, enfin on regarde à quoi correspond l'étiquette du premier token différent de
+"}", si c'est un ";" ou "{", la variable <code> is_array(); </code> n'est pas 
+modifié, dans le cas contraire, si.
 
-Si l'étiquette du token précédent est un T_VARIBABLE alors on ajoutera false à la
-variable <code>$stack</code> sinon true. Il ne reste plus qu'à faire un
-<code>return unshiftTokens(array(T_ARRAY, 'array'), '(');</code>
+Il ne reste plus qu'à ajouter au tableau <code>$stack; </code> la valeur de la
+variable <code> $is_array; </code> et à l'aide d'un test booléen, savoir si l'on
+doit remplacer le token "[". La syntaxe suivante suffit : 
+<code>if ($this->stack[] = $is_array) return unshiftTokens(array(T_ARRAY, 'array'), '(');</code> 
 
-tagCloseBracket : <code>if($this->stack && array_pop($this->stack))</code>
+tagCloseBracket : <code>if(array_pop($this->stack))</code>
 
-on s'assure que $this->stack n'est pas vide et on regarde la dernière valeur du
-tableau associé à la variable $stack. Si les deux conditions sont vérifiées on
-n'a plus qu'à éxécuter le code suivant <code>return
-$this->unshiftTokens(')');</code>
+on regarde la dernière valeur du tableau associé à la variable $stack. Si les 
+deux conditions sont vérifiées on n'a plus qu'à éxécuter le code suivant 
+<code>return $this->unshiftTokens(')');</code>
 
 On s'assure d'avoir fermé toutes les parenthèses. Et voilà votre premier plugin
 php patchwork prêt à l'emploi. bien sûr c'est un plugin assez simple, si vous
