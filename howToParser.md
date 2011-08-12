@@ -65,7 +65,7 @@ fait office d'étiquette.
 
 **Exemple** : array();
 
-	Sortie    | Source code | Token type
+	Sortie    | Source <code>| Token type
    	----------|-------------|------------
    			  |	 array		|	T_ARRAY
    			  |	 (			|   (	
@@ -94,7 +94,7 @@ parser avec la fonction <code>$buffer = file_get_contents('fichier_A_Parser');
 </code>.
 
 **4.** On instancie les objets de la classe Patchwork_PHP_Parser, par défaut
-la syntaxe suivante suffit : <code> $parser = new Patchwork_PHP_Parser; </code>.
+la syntaxe suivante suffit : <code> $parser = new Patchwork_PHP_Parser;</code>.
 
 **5.** On appelle la méthode de la classe que l'on vient d'instancier
 <code>$parser->parse($buffer);</code> qui va parser le flux
@@ -102,7 +102,7 @@ de caractères contenus dans la variable $buffer. On peut récupérer le
 résultat de la méthode parse($buffer) dans un nouveau buffer
 <code>$buffer2=$parser->parse($buffer);</code>, afin de l'injecter dans un
 fichier cible en suivant la syntaxe suivante : <code>file_put_contents('fichier
-_cible', $buffer2); </code>.
+_cible', $buffer2);</code>.
 On sauvegarde le tout.
 
 **6.** Pour éxécuter le parser <code> php parser.php </code> dans un terminal.
@@ -123,7 +123,7 @@ directement au grand D :
 
 - Sauter l'étape 3, à l'étape 4 instancier les objets de la classe à la suite
 des autres instanciations, avec la syntaxe suivante
-<code> new Patchwork_PHP_Parser_Dumper($parser); </code>.
+<code> new Patchwork_PHP_Parser_Dumper($parser);</code>.
 
 - Exécuter le parser comme indiqué au 6. Cette fois-ci devrait être affiché
 à l'écran avec une mise en page similaire à celle donnée en exemple plus
@@ -174,7 +174,7 @@ Cette méthode pourrait fonctionner, mais elle est trop coûteuse en temps car
 elle nécessite de connaître toutes les situations dans lesquelles un tableau
 peut-être déclaré sans déclencher d'erreurs. En effet il est plus simple et plus
 rapide de penser dans l'autre sens. Notre préoccupation n'est pas d'obtenir un
-code juste en sortie, cela relève de la responsabilité du codeur, mais juste
+<code>juste en sortie, cela relève de la responsabilité du codeur, mais juste
 de permettre l'intégration d'une syntaxe. Aussi plutôt que de s'intéresser au
 cas où il faudrait un tableau, il est plus pertinent de s'intéresser au cas où
 l'utilisation du crochet ne constitue pas une Parse error, déjà parce que le
@@ -293,29 +293,29 @@ array()</code> (si besoin relire la partie précente).
 Création des méthodes avec la syntaxe suivante <code>protected function
 tagOpenBracket</code> et <code>protected function tagCloseBracket</code>.
 
-**tagOpenBracket** : déclaration de la variable <code> $is_array() = true; 
+**tagOpenBracket** : déclaration de la variable <code> $is_array() = true;
 </code>. 
 À l'aide d'un switch on vérifie l'étiquette du token précédent, si elle
 correspond à un 
 T_VARIBABLE, ")" et "]" alors <code> is_array() = false </code>. Dans le cas 
 où l'étiquette du token précédent est un "}", on récupère dans la variable
 $token l'ensemble des étiquettes de tokens déjà parsées <code> $token =& 
-$this->types; </code> puis on se positionne à la fin du tableau avec la syntaxe
-suivante <code> end($token); </code>, ensuite tant que le l'étiquette est un 
-"}", on remonte le tableau avec la syntaxe suivante <code>prev($token); </code>
+$this->types;</code> puis on se positionne à la fin du tableau avec la syntaxe
+suivante <code> end($token);</code>, ensuite tant que le l'étiquette est un 
+"}", on remonte le tableau avec la syntaxe suivante <code>prev($token);</code>
 , enfin on regarde à quoi correspond l'étiquette du premier token différent de
-"}", si c'est un ";" ou "{", la variable <code> is_array(); </code> n'est pas 
+"}", si c'est un ";" ou "{", la variable <code> is_array();</code> n'est pas 
 modifié, dans le cas contraire, si.
 
-Il ne reste plus qu'à ajouter au tableau <code>$stack; </code> la valeur de la
-variable <code> $is_array; </code> et à l'aide d'un test booléen, savoir si l'on
+Il ne reste plus qu'à ajouter au tableau <code>$stack;</code> la valeur de la
+variable <code> $is_array;</code> et à l'aide d'un test booléen, savoir si l'on
 doit remplacer le token "[". La syntaxe suivante suffit : 
 <code>if ($this->stack[] = $is_array) return unshiftTokens(array(T_ARRAY, 'array'), '(');</code> 
 
 **tagCloseBracket** : <code>if(array_pop($this->stack))</code>
 
 on regarde la dernière valeur du tableau associé à la variable $stack. Si les 
-deux conditions sont vérifiées on n'a plus qu'à éxécuter le code suivant 
+deux conditions sont vérifiées on n'a plus qu'à éxécuter le <code>suivant 
 <code>return $this->unshiftTokens(')');</code>
 
 On s'assure d'avoir fermé toutes les parenthèses. Et voilà votre premier plugin
