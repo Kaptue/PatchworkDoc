@@ -174,7 +174,7 @@ Cette méthode pourrait fonctionner, mais elle est trop coûteuse en temps car
 elle nécessite de connaître toutes les situations dans lesquelles un tableau
 peut-être déclaré sans déclencher d'erreurs. En effet il est plus simple et plus
 rapide de penser dans l'autre sens. Notre préoccupation n'est pas d'obtenir un
-<code>juste en sortie, cela relève de la responsabilité du codeur, mais juste
+juste en sortie, cela relève de la responsabilité du codeur, mais juste
 de permettre l'intégration d'une syntaxe. Aussi plutôt que de s'intéresser au
 cas où il faudrait un tableau, il est plus pertinent de s'intéresser au cas où
 l'utilisation du crochet ne constitue pas une Parse error, déjà parce que le
