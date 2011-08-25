@@ -77,8 +77,8 @@ variables <code>$depencyName</code> et <code>$dependencies</code>.
 
 Les plugins sont implémentés pour répondre à une situation donnée. Et c'est le
 tableau <code>$callbacks</code> qui permet de rensigner le Parser quant au
-moment où il doit éxécuter une méthode ou non. (Voir tutoriel How To : Plugin
-For Parser pour plus d'informations sur l'utilisation).
+moment où il doit éxécuter une méthode ou non. (Voir tutoriel howToParser To :
+Plugin For Parser pour plus d'informations sur l'utilisation).
 
 Les autres variables permettent de manipuler des tokens, soit en les
 parcourant, soit en ajoutant de nouvelles étiquettes, soit en donnant des
@@ -135,8 +135,8 @@ déclarer de cette façon également <code>echo "test {$a}";</code> ou encore
 <code>echo "test ${a}";</code>, donc il s'agit aussi de ne pas oublier de
 rajouter l'étiquette T_CURLY_CLOSE. La méthode gère également la variable
 <code>$callbacks</code> possédant les méthodes à appliquer pour un token donné
-(voir tutoriel How To : Plugin For Parser pour plus d'informations sur son
-utilisation).
+(voir tutoriel howToParser To : Plugin For Parser pour plus d'informations sur
+son utilisation).
 
 **<code>setError()</code>** : Affiche une erreur contenu dans le code donné en
 entré dans le parser.
@@ -152,8 +152,8 @@ suivant.
 **<code>unshiftTokens</code>** : C'est elle qui va permettre d'injecter des
 tokens dans le flux d'entreé de la tokenization. Elle retourne false.
 Lorsqu'elle est utilisée en valeur de retour par une fonction, elle supprime
-également le token situé à la position où elle est appelée. (voir tutoriel How
-to : Plugin For Parser pour plus d'informations sur son utilisation).
+également le token situé à la position où elle est appelée. (voir tutoriel
+howToParser pour plus d'informations sur son utilisation).
 
 **<code>registryApply</code>** : Méthode utilisée par les méthodes
 <code>register()</code> et <code>unregister()</code>, en fonction de son
@@ -186,7 +186,7 @@ Le Parser pour véritablement fonctionner a besoin de plugin qui vont se greffer
 à lui. Donc dans Patchwork, le Parser est fourni avec un certain nombre de
 plugins. Certains pour améliorer la lisibilité du code, d'autres pour ajouter
 ou supprimer une syntaxe obsolète, d'autres pour ajouter des étiquettes afin
-d'augmenter la précision de lecture des tokens. (Voir le tutoriel How to :
+d'augmenter la précision de lecture des tokens. (Voir le tutoriel howToParser :
 Plugin For Parser pour avoir un exemple de plugin utilisant le Parser)
 
 Parmis les plugins fournis, il existe deux types de plugins :
@@ -196,5 +196,5 @@ Parmis les plugins fournis, il existe deux types de plugins :
 - Ceux dépendant de Patchwork, ils ont été crées avec une certaine spécifité. 
 
 Les plugins indépendants de Patchwork vont bénéficier d'une description un peu
-plus détaillée et de fichier test prêt à être éxécutée. (Voir le tutoriel How
-to : Plugin For Parser pour avoir un exemple d'éxécution des plugins)
+plus détaillée et de fichier test prêt à être éxécutée. (Voir le tutoriel
+howToParser pour avoir un exemple d'éxécution des plugins)
