@@ -184,12 +184,18 @@ liste exhaustive des cas d'utilisation d'un tableau et tous les autres cas
 constitueraient des Fatal error qui relèverent du codeur.
 
 Et par une série de test sur tous les tokens connus (voir lien première partie)
-on a déterminé que les seuls tokens pouvant dans certains cas précéder le token 
-"[" sont "]", "T_VARIABLE" et "}". À cette liste il faut rajouter le caractère
-")" qui sera autorisé dans certains cas à partir de php 5.4.
+on a déterminé que les tokens pouvant dans certains cas précéder le token "["
+sont "]", "T_VARIABLE", "T_STRING" et "}". À cette liste il faut rajouter le
+caractère ")" qui sera autorisé dans certains cas à partir de php 5.4.
 
 "]" : lorsqu'on souhaite accéder à une valeur dans un tableau à deux dimensions ou
 plus. Exemple d'utilisation <code>$a[1][1];</code>.
+
+"T_STRING" : on peut essayer d'accéder à la valeur de cette variable de cette
+façon <code>$a->test[1];</code>, dans le cas présent, test possède l'étiquette
+"T_STRING". Pour l'instant, il n'est pas autorisé de déclarer un array à la suite
+d'un token possédant l'étiquette "T_STRING". Donc on peut dans tous les cas
+ne pas modifier le token "[".
 
 "}" : lorsqu'on souhaite accéder à une valeur dans un tableau.
 Exemple d'utilisation <code>${"a"}[0];</code> ce qui équivaut à
@@ -201,16 +207,17 @@ Maintenant que nous avons déblayé et saisi le problème, nous allons pouvoir
 implémenter l'algorithme mais avant cela il est nécessaire que certaines
 fonctionnalités incluses dans le fichier **Parser.php** vous soient expliquées.
 
-<code>$callbacks;</code> : La variable callbaks est un array particulier,
-c'est elle qui va contenir les méthodes et les étiquettes associées aux tokens.
-Cette variable fonctionne comme un marqueur de token, c'est à dire que le plugin 
-dit au parser, je veux tous les tokens ayant comme étiquette "[" et "]" et à chaque 
-token reçu il applique la méthode associée.
+<code>$callbacks;</code> : La variable callbaks est un array particulier, c'est
+elle qui va contenir les méthodes et les étiquettes associées aux tokens.
+Cette variable fonctionne comme un marqueur de token, c'est à dire que le
+plugin dit au parser, je veux tous les tokens ayant comme étiquette "[" et "]"
+et à chaque token reçu il applique la méthode associée.
 
-**exemple de syntaxe** : <code>$callbaks = array( 'tagOpenBracket' => '[' );</code>.
+**exemple de syntaxe** : <code>$callbaks = array( 'tagOpenBracket' => '['
+);</code>.
 
-'tagOpenBracket', désigne la méthode et '[', le token sur lequel la méthode doit
-s'appliquer.
+'tagOpenBracket', désigne la méthode et '[', le token sur lequel la méthode
+doit s'appliquer.
 
 <code>$lastType;</code> : Permet d'accéder au prédécent token.
 
@@ -225,9 +232,10 @@ par contre la suivante ne l'est pas <code>if(0){}[1];</code> (2).
 cette expression peut être n'importe quoi. Par contre si "}" est directement 
 précédé par "{" ou ";" on est dans le cas (2) d'une parse error.
 
-Et donc la variable <code> $types </code>, que l'on va parcourir via une boucle en partant de 
-la fin, va nous permettre de déterminer le premier token différent "}" et le
-précédant, si il est différent de "{" ou ";" alors on ne modifiera pas le "[".
+Et donc la variable <code> $types </code>, que l'on va parcourir via une boucle
+en partant de la fin, va nous permettre de déterminer le premier token
+différent "}" et le précédant, si il est différent de "{" ou ";" alors on ne
+modifiera pas le "[".
 
 pour se faire on utilisera la fonction <code>end();</code> qui nous fera
 parcourir le tableau à partir du dernier élément et la fonction
@@ -267,10 +275,10 @@ Nous avons une imbrication d'array à l'intérieur de laquelle se trouve une
 variable dont les crochets associés ne doivent pas subir de modifications.
 
 Comment procéder à cela ? L'idée va être d'introduire deux variables. La
-première sera un
-tableau, il devra contenir un booléen, "true" si le crochet ouvrant est remplacé
-ou "false" dans le cas contraire. Ainsi pour savoir si un crochet fermant doit être
-remplacé il suffira de regarder la valeur du dernier élément du tableau.
+première sera un tableau, il devra contenir un booléen, "true" si le crochet
+ouvrant est remplacé ou "false" dans le cas contraire. Ainsi pour savoir si un
+crochet fermant doit être remplacé il suffira de regarder la valeur du dernier
+élément du tableau.
 
 On appelle cette variable <code>$stack = array()</code>. La deuxième variable
 , <code>$is_array();</code>, sera justement le booléen à introduire dans la 
@@ -283,9 +291,9 @@ créer le plugin.
 
 **C Le Code**
 
-On crée une classe héritière de la classe Patchwork_PHP_Parser que l'on va nommer
-Patchwork_PHP_Parser_NormalizerArray.
-Il est conseillé d'avoir des variables et des fonctions "protected".
+On crée une classe héritière de la classe Patchwork_PHP_Parser que l'on va
+nommer Patchwork_PHP_Parser_NormalizerArray.  Il est conseillé d'avoir des
+variables et des fonctions "protected".
 
 Déclaration des variables <code>$stack = array()</code> et <code>$callbacks =
 array()</code> (si besoin relire la partie précente).
@@ -294,23 +302,23 @@ Création des méthodes avec la syntaxe suivante <code>protected function
 tagOpenBracket</code> et <code>protected function tagCloseBracket</code>.
 
 **tagOpenBracket** : déclaration de la variable <code> $is_array() = true;
-</code>. 
-À l'aide d'un switch on vérifie l'étiquette du token précédent, si elle
-correspond à un 
-T_VARIBABLE, ")" et "]" alors <code> is_array() = false </code>. Dans le cas 
-où l'étiquette du token précédent est un "}", on récupère dans la variable
-$token l'ensemble des étiquettes de tokens déjà parsées <code> $token =& 
-$this->types;</code> puis on se positionne à la fin du tableau avec la syntaxe
-suivante <code> end($token);</code>, ensuite tant que le l'étiquette est un 
-"}", on remonte le tableau avec la syntaxe suivante <code>prev($token);</code>
-, enfin on regarde à quoi correspond l'étiquette du premier token différent de
-"}", si c'est un ";" ou "{", la variable <code> is_array();</code> n'est pas 
-modifié, dans le cas contraire, si.
+</code>.  À l'aide d'un switch on vérifie l'étiquette du token précédent, si
+elle correspond à un "T_STRING", "T_VARIBABLE", ")" et "]" alors <code>
+is_array() = false </code>. Dans le cas où l'étiquette du token précédent est
+un "}", on récupère dans la variable $token l'ensemble des étiquettes de tokens
+déjà parsées <code> $token =& $this->types;</code> puis on se positionne à la
+fin du tableau avec la syntaxe suivante <code> end($token);</code>, ensuite
+tant que le l'étiquette est un "}", on remonte le tableau avec la syntaxe
+suivante <code>prev($token);</code> , enfin on regarde à quoi correspond
+l'étiquette du premier token différent de "}", si c'est un ";" ou "{", la
+variable <code> is_array();</code> n'est pas modifié, dans le cas contraire,
+si.
 
 Il ne reste plus qu'à ajouter au tableau <code>$stack;</code> la valeur de la
 variable <code> $is_array;</code> et à l'aide d'un test booléen, savoir si l'on
-doit remplacer le token "[". La syntaxe suivante suffit : 
-<code>if ($this->stack[] = $is_array) return unshiftTokens(array(T_ARRAY, 'array'), '(');</code> 
+doit remplacer le token "[". La syntaxe suivante suffit : <code>if
+($this->stack[] = $is_array) return unshiftTokens(array(T_ARRAY, 'array'),
+'(');</code> 
 
 **tagCloseBracket** : <code>if(array_pop($this->stack))</code>
 
