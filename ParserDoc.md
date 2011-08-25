@@ -54,7 +54,7 @@ référence à ce fichier.
 Or la tokenization est un mécanisme existant en dehors de Patchwork et déjà
 implémentée via d'autres fonctions, donc ce mécanisme n'est pas nouveau et
 encore moins original pourtant avec Patchwork le choix a été fait de lui
-ajouter un processus de tokenization personnalisé. Il est donc nécessaire de
+ajouter un processus de tokenization personnalisée. Il est donc nécessaire de
 voir quelles sont les originalités de cette implémentation et comment elles
 font du Parser un outil clef de Patchwork. Aussi dans cette partie nous
 détaillerons le fonctionnement du fichier **Parser.php**.
@@ -81,10 +81,14 @@ tableau <code>$callbacks</code> qui permet de rensigner le Parser quant au
 moment où il doit éxécuter une méthode ou non. (Voir tutoriel How To : Plugin
 For Parser pour plus d'informations sur l'utilisation).
 
-Les autres variables permettent de manipuler des tokens, soit en la parcourant,
-soit en ajoutant de nouvelles étiquettes, soit en donnant des informations sur
-tel ou tel tokens. Comme par exemple <code>$tokens, $types, $texts,
-$tokenRegistry</code> qui sont des tableaux. Les trois premiers sont utiles
+Les autres variables permettent de manipuler des tokens, soit en les
+parcourant, soit en ajoutant de nouvelles étiquettes, soit en donnant des
+informations sur tel ou tel tokens. Comme par exemple <code>$tokens, $types,
+$texts, $tokenRegistry</code> qui sont des tableaux. le premier pour stocker
+les tokens a parsé, les second et troisième pour contenir les tokens déjà
+parsés l'un les types sémantiques, l'autre les types non sémantiques, et enfin
+le quatrième pour gérer les étiquettes associés à la variable
+<code>$callbacks</code>.
 
 **la fonction __construct**
 
